@@ -1,0 +1,21 @@
+{
+  "name": "vlc-discord-rpc-node",
+  "version": "1.0.0",
+  "description": "Node.js implementation of VLC Discord Rich Presence",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "vlc",
+    "discord",
+    "rpc",
+    "rich-presence"
+  ],
+  "author": "ciizerr",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "discord-rpc": "^4.0.1"
+  }
+}
