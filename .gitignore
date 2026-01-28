@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+
+# Windows / VScode
+.vscode/
+Thumbs.db
+Desktop.ini
+*.log
+
+# Mac
+.DS_Store
+
+# C++ / Build Artifacts
+debug/
+release/
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.suo
+.vs/
