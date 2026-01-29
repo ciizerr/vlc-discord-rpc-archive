@@ -33,7 +33,7 @@ export async function getRepoContent(segments: string[] = []): Promise<FileNode[
                 .filter(e => {
                     // Hide .git, website itself (to avoid confusion?), and hidden files
                     if (e.name.startsWith('.')) return false;
-                    if (e.name === 'website') return false;
+                    if (e.name === 'vlc-discord-site') return false;
                     if (e.name === 'node_modules') return false;
                     if (e.name === 'package-lock.json') return false;
                     return true;
