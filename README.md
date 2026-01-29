@@ -2,7 +2,8 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/ciizerr/vlc-discord-rpc-archive) ![GitHub license](https://img.shields.io/github/license/ciizerr/vlc-discord-rpc-archive) ![GitHub stars](https://img.shields.io/github/stars/ciizerr/vlc-discord-rpc-archive?style=flat) ![Discord RPC version](https://img.shields.io/badge/Discord%20RPC-4.0.1-blue)  
 
-**VLC Discord Rich Presence** brings your VLC playback information straight to Discord, showing what you’re watching or listening with beautiful icons, quality tags, audio‑language hints and a handy “Search this” button.
+**VLC Discord Rich Presence** brings your VLC playback information straight to Discord, showing what you’re watching or listening with beautiful icons, quality tags, audio‑language hints and a handy “Search this” button. 
+**( Discord installation required, if you don't installed yet.!! )**
 
 > **Demo** – See the presence in action on Discord (link to a short video or GIF if you have one).  
 
