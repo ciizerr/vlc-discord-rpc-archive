@@ -1,12 +1,17 @@
 import Link from "next/link";
+import { Download } from "lucide-react";
 import DiscordCard from "@/components/DiscordCard";
 import RepoExplorer from "@/components/RepoExplorer";
 import DotGrid from "@/components/DotGrid";
 import Navbar from "@/components/Navbar";
 import GlassSurface from "@/components/GlassSurface";
 import MagicBento from "@/components/MagicBento";
+import ChangelogViewer from "@/components/ChangelogViewer";
+import { getChangelogContent } from "@/lib/source-reader";
 
-export default function Home() {
+export default async function Home() {
+  const changelogContent = await getChangelogContent();
+
   return (
     <div className="min-h-screen text-foreground font-sans selection:bg-orange-500/30 overflow-x-hidden relative">
 
@@ -56,10 +61,12 @@ export default function Home() {
                   backgroundOpacity={0.3}
                   brightness={110}
                   opacity={0.5}
-                  mixBlendMode="screen"
-                  className="px-8 py-3 text-foreground font-bold hover:brightness-125 transition-all text-sm"
+                  className="px-8 py-3 text-foreground font-bold hover:brightness-125 transition-all text-sm hover:scale-105 active:scale-95 duration-300"
                 >
-                  Windhawk Mod Store
+                  <div className="flex items-center gap-3">
+                    <span>Get Mod</span>
+                    <Download size={18} strokeWidth={2.5} />
+                  </div>
                 </GlassSurface>
               </Link>
 
@@ -73,7 +80,7 @@ export default function Home() {
                   brightness={90}
                   opacity={0.5}
                   mixBlendMode="screen"
-                  className="px-8 py-3 text-muted-foreground font-bold border border-white/10 hover:border-white/30 hover:text-foreground transition-all text-sm"
+                  className="px-8 py-3 text-muted-foreground font-bold border border-white/10 hover:border-white/30 hover:text-foreground transition-all text-sm hover:scale-105 active:scale-95 duration-300"
                 >
                   View Source
                 </GlassSurface>
@@ -142,7 +149,13 @@ export default function Home() {
               <span className="text-slate-500 font-mono text-xs hidden md:block">vlc-discord-rpc-archive/</span>
             </div>
 
+
             <RepoExplorer />
+          </div>
+
+          {/* Section 4: Changelog */}
+          <div className="mt-32">
+            {changelogContent && <ChangelogViewer markdown={changelogContent} />}
           </div>
 
         </div>

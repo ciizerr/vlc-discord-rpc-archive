@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import GlassSurface from "@/components/GlassSurface";
-import { Star, Download, Menu, X, Sun, Moon } from "lucide-react";
+import { Star, Menu, X, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 
@@ -115,13 +115,7 @@ export default function Navbar() {
                             </span>
                         </Link>
 
-                        <Link
-                            href="https://windhawk.net/mods/vlc-discord-rpc"
-                            className="flex items-center gap-2 px-5 py-2 bg-foreground text-background rounded-full font-bold hover:opacity-90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/5"
-                        >
-                            <span>Get Mod</span>
-                            <Download size={14} strokeWidth={3} />
-                        </Link>
+
                     </div>
 
                     {/* Mobile Menu Toggle */}
@@ -172,13 +166,7 @@ export default function Navbar() {
                             </div>
 
                             <div className="flex flex-col gap-3 mt-2">
-                                <Link
-                                    href="https://windhawk.net/mods/vlc-discord-rpc"
-                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-foreground text-background rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-white/10"
-                                >
-                                    <span>Get Mod</span>
-                                    <Download size={14} strokeWidth={3} />
-                                </Link>
+
                                 <Link
                                     href="https://github.com/ciizerr/vlc-discord-rpc-archive"
                                     target="_blank"
