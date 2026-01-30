@@ -8,15 +8,13 @@ import MagicBento from "@/components/MagicBento";
 
 export default function Home() {
   return (
-    <div className="min-h-screen text-slate-200 font-sans selection:bg-orange-500/30 overflow-x-hidden relative">
+    <div className="min-h-screen text-foreground font-sans selection:bg-orange-500/30 overflow-x-hidden relative">
 
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <DotGrid
           dotSize={30}
           gap={40}
-          baseColor="#040509ff"
-          activeColor="#ff9500"
           proximity={500}
           shockRadius={50}
           shockStrength={10}
@@ -40,7 +38,7 @@ export default function Home() {
               VLC DISCORD RPC
             </h1>
 
-            <p className="text-xl text-slate-200 mt-6 max-w-2xl mx-auto drop-shadow-md font-medium">
+            <p className="text-xl text-muted-foreground mt-6 max-w-2xl mx-auto drop-shadow-md font-medium">
               The native, lightweight bridge between VLC Media Player and your Discord Status.
               Powered by Windhawk.
             </p>
@@ -55,16 +53,11 @@ export default function Home() {
                   width="auto"
                   height="auto"
                   borderRadius={99}
-                  displace={0.5}
-                  distortionScale={-180}
-                  redOffset={0}
                   backgroundOpacity={0.3}
-                  greenOffset={10}
-                  blueOffset={20}
-                  brightness={50}
-                  opacity={0.93}
+                  brightness={110}
+                  opacity={0.5}
                   mixBlendMode="screen"
-                  className="px-8 py-3 text-white font-bold hover:brightness-125 transition-all text-sm"
+                  className="px-8 py-3 text-foreground font-bold hover:brightness-125 transition-all text-sm"
                 >
                   Windhawk Mod Store
                 </GlassSurface>
@@ -75,16 +68,12 @@ export default function Home() {
                   width="auto"
                   height="auto"
                   borderRadius={99}
-                  displace={0.5}
-                  distortionScale={-180}
-                  redOffset={0}
+
                   backgroundOpacity={0.3}
-                  greenOffset={10}
-                  blueOffset={20}
-                  brightness={30}
+                  brightness={90}
                   opacity={0.5}
                   mixBlendMode="screen"
-                  className="px-8 py-3 text-slate-300 font-bold border border-white/10 hover:border-white/30 hover:text-white transition-all text-sm"
+                  className="px-8 py-3 text-muted-foreground font-bold border border-white/10 hover:border-white/30 hover:text-foreground transition-all text-sm"
                 >
                   View Source
                 </GlassSurface>
@@ -121,6 +110,24 @@ export default function Home() {
                   title: "Auto-State",
                   description: "Automatically switches between Playing, Paused, and Stopped states instantly using VLC's internal events.",
                   label: "Automation",
+                  color: "#0a0a0a"
+                },
+                {
+                  title: "Smart Recognition",
+                  description: "Automatically detects SxxExx format to display Show Name, Season, and Episode for TV shows.",
+                  label: "Intelligence",
+                  color: "#0a0a0a"
+                },
+                {
+                  title: "Instant Search",
+                  description: "Includes a configurable 'Search This' button that redirects to Google, IMDb, or YouTube.",
+                  label: "Interactive",
+                  color: "#0a0a0a"
+                },
+                {
+                  title: "Rich Details",
+                  description: "Displays advanced metadata including video resolution (4K/HDR) and active audio languages.",
+                  label: "Metadata",
                   color: "#0a0a0a"
                 }
               ]}

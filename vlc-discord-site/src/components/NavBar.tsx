@@ -4,31 +4,61 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import GlassSurface from "@/components/GlassSurface";
-import { Star, Download, Menu, X } from "lucide-react";
+import { Star, Download, Menu, X, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
+
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { theme, setTheme } = useTheme();
+
+    // Prevent hydration mismatch
+    const [mounted, setMounted] = useState(false);
+    React.useEffect(() => setMounted(true), []);
+
+    if (!mounted) return null;
+
+    // --- NAVBAR CONFIGURATION ---
+    const NAV_DARK = {
+        backgroundOpacity: 0.5,
+        brightness: 100, // 100% = Normal brightness
+        opacity: 0.93,
+        mixBlendMode: "screen" as const, // 'screen' | 'overlay' | 'multiply' | 'normal'
+    };
+
+    const NAV_LIGHT = {
+        backgroundOpacity: 0.6, // Slightly more opaque
+        brightness: 100,        // Normal brightness
+        opacity: 0.95,
+        mixBlendMode: "normal" as const, // Normal blending for visibility
+    };
+
+    const navSettings = theme === 'dark' ? NAV_DARK : NAV_LIGHT;
+    // ----------------------------
+
+    const toggleTheme = () => {
+        setTheme(theme === 'dark' ? 'light' : 'dark');
+    };
 
     return (
         <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4 md:px-0">
             <GlassSurface
                 width="100%"
                 height="auto"
-                borderRadius={99}
+                borderRadius={50}
                 borderWidth={0.07}
-                displace={0.5}
-                distortionScale={-180}
-                redOffset={0}
-                backgroundOpacity={0.5}
-                greenOffset={10}
-                blueOffset={20}
-                brightness={50}
-                opacity={0.93}
-                mixBlendMode="screen"
+                blur={11}
+
+                // Dynamic Settings
+                backgroundOpacity={navSettings.backgroundOpacity}
+                brightness={navSettings.brightness}
+                opacity={navSettings.opacity}
+                mixBlendMode={navSettings.mixBlendMode}
+
                 className="px-6 py-3 relative transition-all duration-300"
             >
-                <div className="flex justify-between items-center w-full text-sm font-medium text-slate-200">
+                <div className="flex justify-between items-center w-full text-sm font-medium text-foreground">
                     {/* Left: Logo */}
                     <div className="flex items-center gap-3">
                         <div className="bg-orange-500/10 p-1 rounded-full border border-orange-500/20 shadow-[0_0_15px_-3px_rgba(249,115,22,0.4)] relative">
@@ -40,7 +70,7 @@ export default function Navbar() {
                                 className="object-contain"
                             />
                         </div>
-                        <span className="font-bold tracking-tight text-white hidden sm:block">
+                        <span className="font-bold tracking-tight text-foreground hidden sm:block">
                             VLC-RPC
                         </span>
                     </div>
@@ -49,44 +79,45 @@ export default function Navbar() {
                     <div className="hidden md:flex gap-8 absolute left-1/2 -translate-x-1/2">
                         <Link
                             href="#features"
-                            className="hover:text-white transition-colors"
+                            className="hover:text-primary transition-colors text-foreground/80"
                         >
                             Features
                         </Link>
                         <Link
                             href="/archive"
-                            className="hover:text-white transition-colors"
+                            className="hover:text-primary transition-colors text-foreground/80"
                         >
                             Source Code
-                        </Link>
-                        <Link
-                            href="#"
-                            className="hover:text-white transition-colors opacity-60 cursor-not-allowed"
-                            title="Coming Soon"
-                        >
-                            Themes
                         </Link>
                     </div>
 
                     {/* Right: Actions (Desktop) */}
                     <div className="hidden md:flex items-center gap-3">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 text-foreground/70 hover:text-orange-400 hover:scale-110 active:scale-95 transition-all"
+                            title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                        >
+                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                        </button>
+
                         <Link
                             href="https://github.com/ciizerr/vlc-discord-rpc-archive"
                             target="_blank"
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/30 hover:bg-slate-700/50 rounded-full border border-slate-700/50 hover:border-slate-500 transition-colors group backdrop-blur-sm"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/5 hover:bg-slate-700/10 rounded-full border border-slate-700/20 hover:border-slate-500/40 transition-colors group backdrop-blur-sm"
                         >
                             <Star
                                 size={14}
                                 className="text-slate-400 group-hover:text-yellow-400 transition-colors"
                             />
-                            <span className="text-xs font-bold font-mono text-slate-300">
+                            <span className="text-xs font-bold font-mono text-foreground/70">
                                 1.2k
                             </span>
                         </Link>
 
                         <Link
                             href="https://windhawk.net/mods/vlc-discord-rpc"
-                            className="flex items-center gap-2 px-5 py-2 bg-slate-100 text-slate-950 rounded-full font-bold hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-lg shadow-white/10"
+                            className="flex items-center gap-2 px-5 py-2 bg-foreground text-background rounded-full font-bold hover:opacity-90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/5"
                         >
                             <span>Get Mod</span>
                             <Download size={14} strokeWidth={3} />
@@ -94,10 +125,16 @@ export default function Navbar() {
                     </div>
 
                     {/* Mobile Menu Toggle */}
-                    <div className="md:hidden flex items-center">
+                    <div className="md:hidden flex items-center gap-4">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 text-foreground/70 hover:text-orange-400 transition-all"
+                        >
+                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                        </button>
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="p-2 text-slate-300 hover:text-white transition-colors"
+                            className="p-2 text-foreground/70 hover:text-foreground transition-colors"
                         >
                             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
@@ -118,26 +155,26 @@ export default function Navbar() {
                         <GlassSurface
                             width="100%"
                             height="auto"
-                            borderRadius={24}
+                            borderRadius={50}
                             borderWidth={0.07}
-                            displace={0.5}
-                            backgroundOpacity={0.5}
-                            distortionScale={-180}
-                            brightness={40}
-                            opacity={0.95}
-                            mixBlendMode="screen"
+                            blur={11}
+
+                            // Dynamic Settings
+                            backgroundOpacity={navSettings.backgroundOpacity}
+                            brightness={navSettings.brightness}
+                            opacity={navSettings.opacity}
+                            mixBlendMode={navSettings.mixBlendMode}
                             className="p-6 flex flex-col gap-6"
                         >
-                            <div className="flex flex-col gap-4 text-center text-sm font-medium text-slate-200">
-                                <Link href="#features" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-white transition-colors border-b border-white/5">Features</Link>
-                                <Link href="/archive" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-white transition-colors border-b border-white/5">Source Code</Link>
-                                <Link href="#" className="py-2 hover:text-white transition-colors opacity-60">Themes (Soon)</Link>
+                            <div className="flex flex-col gap-4 text-center text-sm font-medium text-foreground">
+                                <Link href="#features" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-primary transition-colors border-b border-white/5">Features</Link>
+                                <Link href="/archive" onClick={() => setIsMenuOpen(false)} className="py-2 hover:text-primary transition-colors border-b border-white/5">Source Code</Link>
                             </div>
 
                             <div className="flex flex-col gap-3 mt-2">
                                 <Link
                                     href="https://windhawk.net/mods/vlc-discord-rpc"
-                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-slate-100 text-slate-950 rounded-xl font-bold hover:bg-white transition-all active:scale-95 shadow-lg shadow-white/10"
+                                    className="flex items-center justify-center gap-2 px-5 py-3 bg-foreground text-background rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-white/10"
                                 >
                                     <span>Get Mod</span>
                                     <Download size={14} strokeWidth={3} />

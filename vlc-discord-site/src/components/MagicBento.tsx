@@ -495,13 +495,15 @@ const BentoCardGrid: React.FC<{
   gridRef?: React.RefObject<HTMLDivElement | null>;
 }> = ({ children, gridRef }) => (
   <div
-    className="bento-section grid gap-2 p-3 max-w-[54rem] select-none relative"
+    className="bento-section grid gap-6 p-3 max-w-[54rem] mx-auto select-none relative"
     style={{ fontSize: 'clamp(1rem, 0.9rem + 0.5vw, 1.5rem)' }}
     ref={gridRef}
   >
     {children}
   </div>
 );
+
+// ... (useMobileDetection hook remains here) ...
 
 const useMobileDetection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -546,18 +548,39 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-y: 50%;
             --glow-intensity: 0;
             --glow-radius: 200px;
+            /* Use global CSS variables or fallback */
             --glow-color: ${glowColor};
-            --border-color: #392e4e;
-            --background-dark: #060010;
-            --white: hsl(0, 0%, 100%);
-            --purple-primary: rgba(132, 0, 255, 1);
-            --purple-glow: rgba(132, 0, 255, 0.2);
-            --purple-border: rgba(132, 0, 255, 0.8);
+            --border-color: var(--border, rgba(57, 46, 78, 0.5));
+            --background-card: var(--card, #060010);
+            --text-primary: var(--foreground, #ffffff);
+            --text-secondary: var(--muted-foreground, rgba(255, 255, 255, 0.7));
+          }
+
+          [data-theme='light'] .bento-section {
+             --border-color: rgba(0, 0, 0, 0.1);
+             --background-card: rgba(255, 255, 255, 0.8);
+             --text-primary: #0f172a;
+             --text-secondary: #475569;
+          }
+          
+          .card {
+            background-color: var(--background-card);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+          }
+
+          .card__label {
+            color: var(--text-secondary);
+          }
+          
+          .card__description {
+            color: var(--text-secondary);
+            opacity: 0.9;
           }
           
           .card-responsive {
             grid-template-columns: 1fr;
-            width: 90%;
+            width: 100%;
             margin: 0 auto;
             padding: 0.5rem;
           }
@@ -614,7 +637,7 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .card--border-glow:hover {
-            box-shadow: 0 4px 20px rgba(46, 24, 78, 0.4), 0 0 30px rgba(${glowColor}, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 0 30px rgba(${glowColor}, 0.2);
           }
           
           .particle::before {
@@ -630,8 +653,9 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .particle-container:hover {
-            box-shadow: 0 4px 20px rgba(46, 24, 78, 0.2), 0 0 30px rgba(${glowColor}, 0.2);
+             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 0 30px rgba(${glowColor}, 0.2);
           }
+
           
           .text-clamp-1 {
             display: -webkit-box;
@@ -678,15 +702,13 @@ const MagicBento: React.FC<BentoProps> = ({
       )}
 
       <BentoCardGrid gridRef={gridRef}>
-        <div className="card-responsive grid gap-2">
+        <div className="card-responsive grid gap-6">
           {dataToRender.map((card, index) => {
             const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[200px] w-full max-w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-colors duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${enableBorderGlow ? 'card--border-glow' : ''
               }`;
 
             const cardStyle = {
-              backgroundColor: card.color || 'var(--background-dark)',
-              borderColor: 'var(--border-color)',
-              color: 'var(--white)',
+              // Styles are now handled by CSS classes and variables defined above
               '--glow-x': '50%',
               '--glow-y': '50%',
               '--glow-intensity': '0',
@@ -706,10 +728,10 @@ const MagicBento: React.FC<BentoProps> = ({
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
                 >
-                  <div className="card__header flex justify-between gap-3 relative text-white">
+                  <div className="card__header flex justify-between gap-3 relative">
                     <span className="card__label text-base">{card.label}</span>
                   </div>
-                  <div className="card__content flex flex-col relative text-white">
+                  <div className="card__content flex flex-col relative">
                     <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
                       {card.title}
                     </h3>

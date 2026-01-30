@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
-
 @custom-variant dark (&:is(.dark *));
-
-body {
-  @apply antialiased;
-}
 
 @theme inline {
 
@@ -219,11 +214,17 @@ body {
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
 
-  body {
-    @apply bg-slate-950 text-foreground;
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border, currentColor);
   }
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: var(--font-geist-sans), sans-serif;
 }

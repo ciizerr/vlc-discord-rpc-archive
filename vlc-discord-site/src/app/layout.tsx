@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { SettingsProvider } from "@/context/SettingsContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,7 +32,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SettingsProvider>
+          {children}
+        </SettingsProvider>
       </body>
     </html>
   );

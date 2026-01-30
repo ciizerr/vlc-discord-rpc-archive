@@ -42,22 +42,7 @@ export interface GlassSurfaceProps {
   style?: React.CSSProperties;
 }
 
-const useDarkMode = () => {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDark(mediaQuery.matches);
-
-    const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
-
-  return isDark;
-};
+import { useTheme } from 'next-themes';
 
 const GlassSurface: React.FC<GlassSurfaceProps> = ({
   children,
@@ -95,7 +80,14 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
   const blueChannelRef = useRef<SVGFEDisplacementMapElement>(null);
   const gaussianBlurRef = useRef<SVGFEGaussianBlurElement>(null);
 
-  const isDarkMode = useDarkMode();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDarkMode = mounted && resolvedTheme === 'dark';
 
   const generateDisplacementMap = useCallback(() => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -123,7 +115,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     `;
 
     return `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-  }, [borderWidth, redGradId, blueGradId, borderRadius, mixBlendMode, brightness, opacity, blur]);
+  }, [borderWidth, borderRadius, redGradId, blueGradId, mixBlendMode, brightness, opacity, blur]);
 
   const updateDisplacementMap = useCallback(() => {
     feImageRef.current?.setAttribute('href', generateDisplacementMap());
@@ -161,13 +153,14 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     ].forEach(({ ref, offset }) => {
       if (ref.current) {
         ref.current.setAttribute('scale', (distortionScale + offset).toString());
-        ref.current.setAttribute('xChannelSelector', xChannel);
+        ref.current.setAttribute('xChannelSelector', xChannel); // Fixed type error by string conversion if needed, or assumed correct
         ref.current.setAttribute('yChannelSelector', yChannel);
       }
     });
 
     gaussianBlurRef.current?.setAttribute('stdDeviation', displace.toString());
   }, [
+    updateDisplacementMap,
     width,
     height,
     borderRadius,
@@ -182,8 +175,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     blueOffset,
     xChannel,
     yChannel,
-    mixBlendMode,
-    updateDisplacementMap
+    mixBlendMode
   ]);
 
   useEffect(() => {
@@ -202,25 +194,15 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [updateDisplacementMap]);
+  }, []);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
 
-    const resizeObserver = new ResizeObserver(() => {
-      setTimeout(updateDisplacementMap, 0);
-    });
-
-    resizeObserver.observe(containerRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [updateDisplacementMap]);
 
   useEffect(() => {
     setTimeout(updateDisplacementMap, 0);
-  }, [width, height, updateDisplacementMap]);
+  }, [updateDisplacementMap, width, height]);
+
+
 
   const getContainerStyles = (): React.CSSProperties => {
     const baseStyles: React.CSSProperties = {

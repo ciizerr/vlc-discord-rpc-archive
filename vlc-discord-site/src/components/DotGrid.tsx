@@ -51,11 +51,15 @@ function hexToRgb(hex: string) {
   };
 }
 
+import { useTheme } from 'next-themes';
+
+// ... (previous code)
+
 const DotGrid: React.FC<DotGridProps> = ({
   dotSize = 16,
   gap = 32,
-  baseColor = '#5227FF',
-  activeColor = '#5227FF',
+  baseColor: propBaseColor,
+  activeColor: propActiveColor,
   proximity = 150,
   speedTrigger = 100,
   shockRadius = 250,
@@ -66,6 +70,22 @@ const DotGrid: React.FC<DotGridProps> = ({
   className = '',
   style
 }) => {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
+  // --- CONFIGURATION: Set your Light/Dark colors here ---
+  const DARK_BASE = '#040509';    // Dark Mode Background Dots
+  const DARK_ACTIVE = '#ff9500';  // Dark Mode Active/Cursor Dots
+
+  const LIGHT_BASE = '#ffffff';   // Light Mode Background Dots (slate-200)
+  const LIGHT_ACTIVE = '#0095ff'; // Light Mode Active/Cursor Dots (Azure Radiance)
+  // NOTE: DotGrid requires 6-digit HEX codes (#RRGGBB) for the color blending math to work.
+  // --------------------------------------------------------
+
+  // Dynamic defaults based on theme
+  const baseColor = propBaseColor || (isDark ? DARK_BASE : LIGHT_BASE);
+  const activeColor = propActiveColor || (isDark ? DARK_ACTIVE : LIGHT_ACTIVE);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dotsRef = useRef<Dot[]>([]);
