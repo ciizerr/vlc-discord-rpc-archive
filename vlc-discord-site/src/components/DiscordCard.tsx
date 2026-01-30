@@ -115,16 +115,16 @@ export default function DiscordCard() {
             </div>
 
             {/* Buttons */}
-            {showButton && (
-                <div className="mt-3 space-y-2">
-                    <button
-                        onClick={() => window.open("https://www.google.com/search?q=Stranger+Things+S05E03+ch1", "_blank")}
-                        className="w-full h-8 rounded bg-[#383a40] text-sm text-white font-medium hover:bg-[#474a52] transition-colors truncate"
-                    >
-                        Search This
-                    </button>
-                </div>
-            )}
+            {/* Buttons - Always rendered to preserve height */}
+            <div className={`mt-3 space-y-2 ${showButton ? '' : 'invisible'}`}>
+                <button
+                    onClick={() => window.open("https://www.google.com/search?q=Stranger+Things+S05E03+ch1", "_blank")}
+                    className="w-full h-8 rounded bg-[#383a40] text-sm text-white font-medium hover:bg-[#474a52] transition-colors truncate"
+                    tabIndex={showButton ? 0 : -1}
+                >
+                    Search This
+                </button>
+            </div>
         </div>
     );
 }

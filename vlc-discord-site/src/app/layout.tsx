@@ -14,10 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "VLC Discord RPC",
-  description: "VLC Discord Rich Presence brings your VLC playback information straight to Discord",
+  description: "The native, lightweight bridge between VLC Media Player and your Discord Status.",
+  icons: {
+    icon: "/assets/vlc-discord-icon.png",
+  },
 };
-
-import NavBar from "@/components/NavBar";
 
 export default function RootLayout({
   children,
@@ -29,7 +30,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavBar />
         {children}
       </body>
     </html>
