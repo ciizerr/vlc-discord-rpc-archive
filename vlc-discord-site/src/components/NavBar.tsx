@@ -71,7 +71,7 @@ export default function Navbar() {
                             />
                         </div>
                         <span className="font-bold tracking-tight text-foreground hidden sm:block">
-                            VLC-RPC
+                            Rich Presence
                         </span>
                     </div>
 

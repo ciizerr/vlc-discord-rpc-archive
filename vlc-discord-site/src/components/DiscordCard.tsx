@@ -76,39 +76,39 @@ export default function DiscordCard() {
     }
 
     return (
-        <div className="bg-[#111214] text-white p-4 rounded-lg w-[340px] shadow-2xl border border-[#1e1f22] font-sans relative overflow-hidden group text-left">
+        <div className="bg-white dark:bg-[#111214] text-slate-900 dark:text-white p-4 rounded-lg w-[340px] shadow-2xl border border-slate-200 dark:border-[#1e1f22] font-sans relative overflow-hidden group text-left transition-colors duration-300">
 
             {/* Decorative Glow */}
             <div className={`absolute top-0 right-0 w-24 h-24 bg-orange-500/10 blur-[50px] rounded-full pointer-events-none transition-opacity duration-1000 ${status === 'playing' ? 'opacity-100' : 'opacity-20'}`}></div>
 
-            <h3 className="text-[11px] font-bold text-[#b5bac1] uppercase mb-3 tracking-wide antialiased">
+            <h3 className="text-[11px] font-bold text-slate-500 dark:text-[#b5bac1] uppercase mb-3 tracking-wide antialiased">
                 Playing a game
             </h3>
 
             <div className="flex gap-3 items-center">
                 {/* Large Image (VLC Cone) */}
                 <div className="relative">
-                    <div className="w-[60px] h-[60px] rounded-[8px] bg-black overflow-hidden relative">
+                    <div className="w-[60px] h-[60px] rounded-[8px] bg-slate-100 dark:bg-black overflow-hidden relative">
                         <Image src="/assets/default/vlc_icon.png" width={60} height={60} alt="VLC" className="object-cover" />
                     </div>
                     {/* Small Image (Circle Status) */}
-                    <div className="absolute -bottom-1 -right-1 w-[24px] h-[24px] rounded-full bg-[#111214] border-[3px] border-[#111214] flex items-center justify-center overflow-hidden">
-                        <Image src={getStatusIcon()} width={24} height={24} alt="Status" className="rounded-full bg-[#111214]" />
+                    <div className="absolute -bottom-1 -right-1 w-[24px] h-[24px] rounded-full bg-white dark:bg-[#111214] border-[3px] border-white dark:border-[#111214] flex items-center justify-center overflow-hidden">
+                        <Image src={getStatusIcon()} width={24} height={24} alt="Status" className="rounded-full bg-transparent" />
                     </div>
                 </div>
 
                 {/* Text Content */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center h-[60px]">
-                    <div className="text-[13px] font-bold text-[#f2f3f5] truncate leading-tight">{title}</div>
-                    <div className="text-[13px] text-[#f2f3f5] truncate leading-tight">{detailText}</div>
-                    <div className="text-[13px] text-[#f2f3f5] truncate leading-tight">{stateText}</div>
+                    <div className="text-[13px] font-bold text-slate-900 dark:text-[#f2f3f5] truncate leading-tight">{title}</div>
+                    <div className="text-[13px] text-slate-700 dark:text-[#f2f3f5] truncate leading-tight">{detailText}</div>
+                    <div className="text-[13px] text-slate-700 dark:text-[#f2f3f5] truncate leading-tight">{stateText}</div>
                     {status !== 'stopped' && (
-                        <div className="text-[13px] text-[#f2f3f5] truncate leading-tight text-[#23a559]">{timeText}</div>
+                        <div className="text-[13px] truncate leading-tight text-emerald-600 dark:text-[#23a559]">{timeText}</div>
                     )}
                     {status === 'stopped' && (
-                        <div className="text-[13px] text-[#f2f3f5] truncate leading-tight flex items-center gap-1">
+                        <div className="text-[13px] truncate leading-tight flex items-center gap-1">
                             {/* Green elapsed timer for idling as per reference */}
-                            <span className="text-[#23a559]">{formatTime(elapsedTime)} elapsed</span>
+                            <span className="text-emerald-600 dark:text-[#23a559]">{formatTime(elapsedTime)} elapsed</span>
                         </div>
                     )}
                 </div>
@@ -119,7 +119,7 @@ export default function DiscordCard() {
             <div className={`mt-3 space-y-2 ${showButton ? '' : 'invisible'}`}>
                 <button
                     onClick={() => window.open("https://www.google.com/search?q=Stranger+Things+S05E03+ch1", "_blank")}
-                    className="w-full h-8 rounded bg-[#383a40] text-sm text-white font-medium hover:bg-[#474a52] transition-colors truncate"
+                    className="w-full h-8 rounded bg-slate-100 dark:bg-[#383a40] text-sm text-slate-900 dark:text-white font-medium hover:bg-slate-200 dark:hover:bg-[#474a52] transition-colors truncate"
                     tabIndex={showButton ? 0 : -1}
                 >
                     Search This
