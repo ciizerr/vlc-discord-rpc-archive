@@ -3,7 +3,7 @@ import { Download } from "lucide-react";
 import DiscordCard from "@/components/DiscordCard";
 import RepoExplorer from "@/components/RepoExplorer";
 import DotGrid from "@/components/DotGrid";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navigation";
 import GlassSurface from "@/components/GlassSurface";
 import MagicBento from "@/components/MagicBento";
 import ChangelogViewer from "@/components/ChangelogViewer";
