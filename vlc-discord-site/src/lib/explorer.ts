@@ -3,9 +3,9 @@ import path from 'path';
 
 // The root of the actual repository (parent of website folder)
 const REPO_ROOT = path.resolve(process.cwd(), '..');
-const GITHUB_OWNER = 'ciizerr';
-const GITHUB_REPO = 'vlc-discord-rpc-archive';
-const GITHUB_BRANCH = 'main'; // or main, check which one
+export const GITHUB_OWNER = 'ciizerr';
+export const GITHUB_REPO = 'vlc-discord-rpc-archive';
+export const GITHUB_BRANCH = 'main'; // or main, check which one
 
 export type FileNode = {
     name: string;
