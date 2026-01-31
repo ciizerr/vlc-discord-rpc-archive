@@ -7,6 +7,9 @@ import Navbar from "@/components/Navigation";
 import GlassSurface from "@/components/GlassSurface";
 import MagicBento from "@/components/MagicBento";
 import ChangelogViewer from "@/components/ChangelogViewer";
+import InstallationGuide from "@/components/InstallationGuide";
+import FAQ from "@/components/FAQ";
+import IconSubmission from "@/components/IconSubmission";
 import { getChangelogContent } from "@/lib/source-reader";
 
 export default async function Home() {
@@ -92,7 +95,11 @@ export default async function Home() {
         <div className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
 
           {/* Section 2: Features */}
-          <div className="pt-24">
+          <div className="pt-24 md:pt-32">
+            <div className="flex items-end justify-between mb-8">
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Features</h2>
+              <span className="text-slate-500 font-mono text-xs hidden md:block">Why it&apos;s better</span>
+            </div>
             <MagicBento
               textAutoHide={false}
               enableStars={true}
@@ -142,6 +149,10 @@ export default async function Home() {
           </div>
 
 
+          {/* Section 2.5: Installation Guide */}
+          <InstallationGuide />
+
+
           {/* Section 3: The Archive */}
           <div className="mt-32">
             <div className="flex items-end justify-between mb-8">
@@ -157,6 +168,12 @@ export default async function Home() {
           <div className="mt-32">
             {changelogContent && <ChangelogViewer markdown={changelogContent} />}
           </div>
+
+          {/* Section 4.5: Icon Submission */}
+          <IconSubmission />
+
+          {/* Section 5: FAQ */}
+          <FAQ />
 
         </div>
 
