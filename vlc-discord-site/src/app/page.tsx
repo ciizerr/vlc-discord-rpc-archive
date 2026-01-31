@@ -10,6 +10,7 @@ import ChangelogViewer from "@/components/ChangelogViewer";
 import InstallationGuide from "@/components/InstallationGuide";
 import FAQ from "@/components/FAQ";
 import IconSubmission from "@/components/IconSubmission";
+import Footer from "@/components/Footer";
 import { getChangelogContent } from "@/lib/source-reader";
 
 export default async function Home() {
@@ -177,16 +178,8 @@ export default async function Home() {
 
         </div>
 
-
-        {/* --- Section 4: Community --- */}
-        <section className="mt-32 mb-20 p-12 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-800 relative overflow-hidden max-w-6xl mx-auto mx-6 lg:mx-auto">
-          {/* ... content ... */}
-        </section>
-
         {/* --- Footer --- */}
-        <footer className="py-10 border-t border-slate-900/50 flex flex-col md:flex-row justify-between items-center text-slate-600 text-sm max-w-6xl mx-auto px-6 w-full">
-          {/* ... content ... */}
-        </footer>
+        <Footer />
 
       </div>
     </div>
