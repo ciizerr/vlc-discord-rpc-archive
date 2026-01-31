@@ -68,7 +68,7 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="hover:text-orange-500 transition-colors">
+                                <Link href="https://discord.com/servers/windhawk-923944342991818753" className="hover:text-orange-500 transition-colors">
                                     Discord Server
                                 </Link>
                             </li>
