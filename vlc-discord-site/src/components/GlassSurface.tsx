@@ -144,6 +144,12 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     return CSS.supports('backdrop-filter', 'blur(10px)');
   }, []);
 
+  const [backdropSupported, setBackdropSupported] = useState(false);
+
+  useEffect(() => {
+    setBackdropSupported(supportsBackdropFilter());
+  }, [supportsBackdropFilter]);
+
   useEffect(() => {
     updateDisplacementMap();
     [
@@ -153,7 +159,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     ].forEach(({ ref, offset }) => {
       if (ref.current) {
         ref.current.setAttribute('scale', (distortionScale + offset).toString());
-        ref.current.setAttribute('xChannelSelector', xChannel); // Fixed type error by string conversion if needed, or assumed correct
+        ref.current.setAttribute('xChannelSelector', xChannel);
         ref.current.setAttribute('yChannelSelector', yChannel);
       }
     });
@@ -194,7 +200,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [updateDisplacementMap]); // Added missing dependency
 
 
 
@@ -214,7 +220,8 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       '--glass-saturation': saturation
     } as React.CSSProperties;
 
-    const backdropFilterSupported = supportsBackdropFilter();
+    // Use state-based check for hydration safety
+    const backdropFilterSupported = backdropSupported;
 
     if (svgSupported) {
       return {

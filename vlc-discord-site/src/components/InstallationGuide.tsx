@@ -25,7 +25,7 @@ export default function InstallationGuide() {
     ];
 
     return (
-        <section className="py-24 relative overflow-hidden">
+        <section id="installation" className="py-24 relative overflow-hidden">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-center gap-3">
                     Installation

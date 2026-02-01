@@ -41,7 +41,7 @@ export default function FAQ() {
         },
         {
             question: "Need more help?",
-            answer: "If you have other questions, feel free to open an issue on GitHub or reach out to the community on Discord.",
+            answer: "If you have other questions, feel free to open an issue on GitHub or reach out to the Windhawk community on Discord and tag @ciizerr.",
             value: "item-7"
         }
     ];

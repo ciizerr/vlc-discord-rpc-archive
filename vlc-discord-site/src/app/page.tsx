@@ -96,7 +96,7 @@ export default async function Home() {
         <div className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
 
           {/* Section 2: Features */}
-          <div className="pt-24 md:pt-32">
+          <div id="features" className="pt-24 md:pt-32">
             <div className="flex items-end justify-between mb-8">
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Features</h2>
               <span className="text-slate-500 font-mono text-xs hidden md:block">Why it&apos;s better</span>
@@ -166,7 +166,7 @@ export default async function Home() {
           </div>
 
           {/* Section 4: Changelog */}
-          <div className="mt-32">
+          <div id="changelog" className="mt-32">
             {changelogContent && <ChangelogViewer markdown={changelogContent} />}
           </div>
 

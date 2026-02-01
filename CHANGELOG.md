@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.0.3 (2025-01-29)
+## v1.0.3 (2026-01-29)
 
 **Mod Stability & Core Improvements**
 

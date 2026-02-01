@@ -231,6 +231,7 @@ export default function ChangelogViewer({ markdown }: { markdown: string }) {
                                         <ReactMarkdown
                                             remarkPlugins={[remarkGfm]}
                                             components={{
+                                                /* eslint-disable @typescript-eslint/no-unused-vars */
                                                 h1: ({ node: _node, ...props }) => <h5 className="font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2" {...props} />,
                                                 h2: ({ node: _node, ...props }) => <h5 className="font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2" {...props} />,
                                                 h3: ({ node: _node, ...props }) => <h5 className="font-bold text-slate-900 dark:text-slate-100 mt-4 mb-2" {...props} />,
@@ -244,6 +245,7 @@ export default function ChangelogViewer({ markdown }: { markdown: string }) {
                                                 ),
                                                 p: ({ node: _node, ...props }) => <p className="mb-4 last:mb-0" {...props} />,
                                                 code: ({ node: _node, ...props }) => <code className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-xs font-mono text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700" {...props} />,
+                                                /* eslint-enable @typescript-eslint/no-unused-vars */
                                             }}
                                         >
                                             {ver.rawContent}
