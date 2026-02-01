@@ -1,98 +1,144 @@
-import { getRepoContent, FileNode } from '@/lib/explorer';
+import { getRepoContent } from '@/lib/explorer';
+import CodeViewer from '@/components/CodeViewer';
 import Link from 'next/link';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Download, ArrowLeft } from 'lucide-react';
+import DriveClient from '@/components/DriveClient';
+import DotGrid from '@/components/DotGrid';
+
+// --- Background Layer ---
+const Background = () => (
+    <div className="fixed inset-0 z-0 pointer-events-none">
+        <DotGrid
+            dotSize={30}
+            gap={40}
+            proximity={500}
+            shockRadius={50}
+            shockStrength={10}
+            resistance={750}
+            returnDuration={2}
+        />
+    </div>
+);
 
 export default async function ArchivePage({ params }: { params: Promise<{ path?: string[] }> }) {
     const resolvedParams = await params;
     const currentPath = resolvedParams.path || [];
 
-    const content = await getRepoContent(currentPath);
+    // --- Standard Structure ---
+    // If currentPath is empty, we are at root.
+    // If currentPath exists, we fetch.
+    let content;
+    if (currentPath.length > 0) {
+        content = await getRepoContent(currentPath);
+    }
 
-    const isFile = typeof content === 'string';
+    // --- Directory Handling (Nested) ---
+    if (Array.isArray(content)) {
+        // It's a folder, render DriveClient with this folder's content
+        return (
+            <div className="h-screen w-full overflow-hidden relative flex flex-col font-sans">
+                <Background />
+                <div className="relative z-10 flex-1 pt-24 pb-6 px-6 max-w-7xl mx-auto w-full flex flex-col min-h-0">
+                    <DriveClient
+                        currentPath={currentPath}
+                        folderContent={content}
+                    />
+                </div>
+            </div>
+        );
+    }
 
-    // Helper to guess language
-    const getLanguage = (filename: string) => {
-        if (filename.endsWith('.js')) return 'javascript';
-        if (filename.endsWith('.ts')) return 'typescript';
-        if (filename.endsWith('.json')) return 'json';
-        if (filename.endsWith('.cpp') || filename.endsWith('.wh.cpp')) return 'cpp';
-        if (filename.endsWith('.h')) return 'cpp';
-        if (filename.endsWith('.css')) return 'css';
-        if (filename.endsWith('.md')) return 'markdown';
-        return 'text';
-    };
+    // --- Detail View (Single File) ---
+    // Only reach here if content is a string (file)
+    if (typeof content === 'string') {
+        const filename = currentPath[currentPath.length - 1];
+
+        // Image Check
+        const isImage = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(filename.split('.').pop()?.toLowerCase() || '');
+
+        if (isImage) {
+            const rawUrl = `https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/${currentPath.join('/')}`;
+            return (
+                <div className="h-screen w-full overflow-hidden relative flex flex-col font-sans">
+                    <Background />
+                    <div className="relative z-10 flex-1 flex flex-col pt-24 pb-8 px-6 max-w-7xl mx-auto w-full">
+                        <div className="mb-6 flex-shrink-0">
+                            <Link href="/archive" className="flex items-center gap-2 text-slate-500 hover:text-orange-500 transition-colors text-sm font-medium">
+                                <ArrowLeft size={16} /> Back to Drive
+                            </Link>
+                        </div>
+                        <div className="flex-1 min-h-0 p-8 flex flex-col items-center justify-center bg-white/50 dark:bg-slate-950/50 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-y-auto">
+                            <div className="relative w-full max-w-3xl flex-shrink-0 aspect-video flex items-center justify-center bg-slate-100/50 dark:bg-slate-950/30 bg-[url('/assets/grid.svg')] bg-center rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                                <img src={rawUrl} alt={filename} className="max-w-full max-h-full object-contain shadow-md" />
+                            </div>
+                            <div className="mt-8 flex gap-4 flex-shrink-0">
+                                <a href={rawUrl} download target="_blank" className="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-sm">
+                                    <Download size={18} /> Download Original
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const getLang = (N: string) => {
+            if (N.endsWith('.js')) return 'javascript';
+            if (N.endsWith('.ts') || N.endsWith('.tsx')) return 'typescript';
+            if (N.endsWith('.json')) return 'json';
+            if (N.endsWith('.cpp') || N.endsWith('.wh.cpp')) return 'cpp';
+            return 'text';
+        };
+
+        return (
+            <div className="h-screen w-full overflow-hidden relative flex flex-col font-sans">
+                <Background />
+                <div className="relative z-10 flex-1 flex flex-col pt-24 pb-8 px-6 max-w-7xl mx-auto w-full">
+                    <div className="mb-6 flex-shrink-0">
+                        <Link href="/archive" className="flex items-center gap-2 text-slate-500 hover:text-orange-500 transition-colors text-sm font-medium">
+                            <ArrowLeft size={16} /> Back to Drive
+                        </Link>
+                    </div>
+                    <div className="flex-1 min-h-0 bg-white/50 dark:bg-slate-950/50 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+                        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30">
+                            <span className="font-mono text-sm text-slate-600 dark:text-slate-400 font-bold">{filename}</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs uppercase font-bold text-slate-500 bg-slate-200/50 dark:bg-slate-800/50 px-2.5 py-1 rounded">Read Only</span>
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-auto p-0">
+                            {content.startsWith('[Binary File') ? (
+                                <div className="p-20 text-center text-slate-500 italic">Binary File</div>
+                            ) : (
+                                <CodeViewer code={content} language={getLang(filename)} />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Root View (Default) ---
+    // If we are here, currentPath is empty (or failed).
+    const [windhawkFiles, scriptFiles, assetFiles] = await Promise.all([
+        getRepoContent(['windhawk-source']),
+        getRepoContent(['node-source']),
+        getRepoContent(['assets'])
+    ]);
 
     return (
-        <div className="min-h-screen p-8 pt-32 max-w-7xl mx-auto font-sans">
-            <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-zinc-500 font-mono">
-                <Link href="/archive" className="hover:text-white transition-colors">root</Link>
-                {currentPath.map((segment, i) => (
-                    <span key={i} className="flex gap-2 items-center">
-                        <span>/</span>
-                        <Link href={`/archive/${currentPath.slice(0, i + 1).join('/')}`} className="hover:text-white transition-colors">
-                            {segment}
-                        </Link>
-                    </span>
-                ))}
-            </div>
-
-            <div className="border border-zinc-800 rounded-lg overflow-hidden bg-zinc-900/40 shadow-xl backdrop-blur-sm">
-                {isFile ? (
-                    <div className="text-sm">
-                        <div className="flex items-center justify-between p-3 bg-zinc-900 border-b border-zinc-800 text-zinc-400">
-                            <span className="font-mono text-xs">{currentPath[currentPath.length - 1]}</span>
-                            <span className="text-xs uppercase px-2 py-0.5 rounded bg-zinc-800 text-zinc-500 font-bold">
-                                {getLanguage(currentPath[currentPath.length - 1] || '')}
-                            </span>
-                        </div>
-                        {content.startsWith('[Binary File') ? (
-                            <div className="p-12 text-center text-zinc-500 italic">
-                                {content}
-                            </div>
-                        ) : (
-                            <SyntaxHighlighter
-                                language={getLanguage(currentPath[currentPath.length - 1] || '')}
-                                style={oneDark}
-                                customStyle={{ margin: 0, padding: '1.5rem', background: 'transparent' }}
-                                showLineNumbers={true}
-                                lineNumberStyle={{ minWidth: '3em', paddingRight: '1em', color: '#52525b' }}
-                            >
-                                {content as string}
-                            </SyntaxHighlighter>
-                        )}
-                    </div>
-                ) : (
-                    <div className="divide-y divide-zinc-800/50">
-                        <div className="bg-zinc-900/50 p-3 grid grid-cols-[auto_1fr] gap-3 text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                            <span className="w-6 text-center">T</span>
-                            <span>Name</span>
-                        </div>
-                        {(content as FileNode[]).map(node => (
-                            <Link
-                                key={node.name}
-                                href={`/archive/${node.path.join('/')}`}
-                                className="flex items-center p-3 hover:bg-zinc-800/80 transition-colors group"
-                            >
-                                <span className="mr-3 text-xl opacity-60 group-hover:opacity-100 w-6 text-center">
-                                    {node.type === 'dir' ? '📂' : '📄'}
-                                </span>
-                                <span className={`flex-1 font-mono text-sm ${node.type === 'dir' ? 'font-bold text-blue-400 group-hover:underline' : 'text-zinc-300'}`}>
-                                    {node.name}
-                                </span>
-                                {node.type === 'file' && (
-                                    <span className="text-xs text-zinc-600 group-hover:text-zinc-500">
-                                        View Code
-                                    </span>
-                                )}
-                            </Link>
-                        ))}
-                        {(content as FileNode[]).length === 0 && (
-                            <div className="p-12 text-center text-zinc-500">Empty Directory</div>
-                        )}
-                    </div>
-                )}
+        <div className="h-screen w-full overflow-hidden relative flex flex-col font-sans">
+            <Background />
+            <div className="relative z-10 flex-1 pt-24 pb-6 px-6 max-w-7xl mx-auto w-full flex flex-col min-h-0">
+                <DriveClient
+                    rootData={{
+                        windhawkFiles: Array.isArray(windhawkFiles) ? windhawkFiles : [],
+                        scriptFiles: Array.isArray(scriptFiles) ? scriptFiles : [],
+                        assetFiles: Array.isArray(assetFiles) ? assetFiles : []
+                    }}
+                />
             </div>
         </div>
-    )
+    );
 }
