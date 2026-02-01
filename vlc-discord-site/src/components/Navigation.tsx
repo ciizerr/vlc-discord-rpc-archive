@@ -68,7 +68,7 @@ export default function Navbar() {
                             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
 
-                        <div className="flex items-center gap-3">
+                        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                             <div className="bg-orange-500/10 p-1 rounded-full border border-orange-500/20 shadow-[0_0_15px_-3px_rgba(249,115,22,0.4)] relative">
                                 <Image
                                     src="/assets/vlc-discord-icon.png"
@@ -81,7 +81,7 @@ export default function Navbar() {
                             <span className="font-bold tracking-tight text-foreground hidden sm:block">
                                 Rich Presence
                             </span>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Center: Links (Desktop) */}

@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Download, Search, CheckCircle, HelpCircle } from "lucide-react";
+import { Download, Search, CheckCircle, HelpCircle, ChevronDown } from "lucide-react";
 import GlassSurface from "@/components/GlassSurface";
 
 export default function InstallationGuide() {
+    const [showConfig, setShowConfig] = useState(false);
     const steps = [
         {
             icon: <Download size={24} />,
@@ -63,6 +64,59 @@ export default function InstallationGuide() {
                             </p>
                         </div>
                     ))}
+                </div>
+
+                {/* Configuration Toggle */}
+                <div className="mt-8 flex flex-col items-center">
+                    <button
+                        onClick={() => setShowConfig(!showConfig)}
+                        className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors flex items-center gap-2"
+                    >
+                        <span>{showConfig ? "Hide Configuration Steps" : "How to Configure VLC?"}</span>
+                        <ChevronDown
+                            size={16}
+                            className={`transition-transform duration-300 ${showConfig ? "rotate-180" : ""}`}
+                        />
+                    </button>
+
+                    <div className={`grid transition-[grid-template-rows] duration-300 ease-out ${showConfig ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"}`}>
+                        <div className="overflow-hidden">
+                            <GlassSurface
+                                width="100%"
+                                height="auto"
+                                borderRadius={20}
+                                backgroundOpacity={0.05}
+                                brightness={100}
+                                opacity={1}
+                                className="p-6 max-w-2xl mx-auto border border-white/10"
+                            >
+                                <div className="space-y-6 text-sm text-slate-600 dark:text-slate-300 text-left">
+                                    <ol className="list-decimal list-inside space-y-4">
+                                        <li>
+                                            Open <strong>VLC Media Player</strong>. Go to <strong className="text-orange-500">Tools</strong> &gt; <strong>Preferences</strong> (or press <code className="bg-black/10 dark:bg-white/10 px-1 rounded">Ctrl+P</code>).
+                                        </li>
+                                        <li>
+                                            In the bottom-left corner, under <strong>Show settings</strong>, select <strong>All</strong>.
+                                        </li>
+                                        <li>
+                                            Navigate to <strong>Interface</strong> &gt; <strong>Main interfaces</strong>. On the right panel, check the box for <strong>Web</strong>.
+
+                                        </li>
+                                        <li>
+                                            In the left sidebar, expand <strong>Main interfaces</strong> and click on <strong>Lua</strong>.
+                                        </li>
+                                        <li>
+                                            Under <strong>Lua HTTP</strong>, set the <strong>Password</strong> to <code className="font-mono font-bold text-orange-600 dark:text-orange-400">1234</code> and <strong>Port</strong> to <code className="font-mono font-bold text-orange-600 dark:text-orange-400">8080</code>.
+
+                                        </li>
+                                        <li>
+                                            Click <strong>Save</strong> and <strong className="text-red-500">Restart VLC</strong> to apply changes.
+                                        </li>
+                                    </ol>
+                                </div>
+                            </GlassSurface>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Prominent CTA */}

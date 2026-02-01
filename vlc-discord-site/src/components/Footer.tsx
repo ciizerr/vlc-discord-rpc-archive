@@ -8,7 +8,7 @@ import { Github, Heart, ExternalLink } from "lucide-react";
 export default function Footer() {
     return (
         <footer className="relative mt-32 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 backdrop-blur-xl">
-            <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="max-w-7xl mx-auto px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
                     {/* Brand Column */}
                     <div className="col-span-1 md:col-span-1">
@@ -108,13 +108,18 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p className="text-slate-500 dark:text-slate-500 text-sm">
-                        &copy; {new Date().getFullYear()} VLC Discord RPC. MIT License.
+                <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+                    <p className="text-center text-xs text-slate-400 dark:text-slate-600 mb-4">
+                        Not affiliated with VideoLAN, Discord, or Windhawk. All trademarks are property of their respective owners.
                     </p>
-                    <p className="text-slate-500 dark:text-slate-500 text-sm flex items-center gap-1">
-                        Made with <Heart size={14} className="text-red-500 fill-red-500" /> for the community.
-                    </p>
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <p className="text-slate-500 dark:text-slate-500 text-sm">
+                            &copy; {new Date().getFullYear()} VLC Discord RPC. MIT License.
+                        </p>
+                        <p className="text-slate-500 dark:text-slate-500 text-sm flex items-center gap-1">
+                            Made with <Heart size={14} className="text-red-500 fill-red-500" /> for the community.
+                        </p>
+                    </div>
                 </div>
             </div>
         </footer>
