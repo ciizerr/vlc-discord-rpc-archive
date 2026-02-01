@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore as useCommonSyncExternalStore } from "react";
+
+const subscribe = () => () => { };
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus, vs } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useTheme } from "next-themes";
@@ -15,6 +19,14 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
     const { resolvedTheme } = useTheme();
     const [expanded, setExpanded] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    // Prevent hydration mismatch by only rendering SyntaxHighlighter on client
+    // useSyncExternalStore is the recommended way to handle "is client" checks without effects
+    const mounted = useCommonSyncExternalStore(
+        subscribe,
+        getSnapshot,
+        getServerSnapshot
+    );
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
@@ -35,33 +47,43 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
 
             {/* Code Block */}
             <div className={`relative overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-full' : 'max-h-[500px]'}`}>
-                <SyntaxHighlighter
-                    language={language}
-                    style={resolvedTheme === 'light' ? vs : vscDarkPlus}
-                    customStyle={{
-                        margin: 0,
-                        padding: '1.5rem',
-                        fontSize: '13px',
-                        lineHeight: '1.5',
-                        background: 'transparent', // Let container handle bg
-                        textShadow: 'none', // Remove "selected" look
-                    }}
-                    codeTagProps={{
-                        style: {
-                            background: 'transparent',
-                            textShadow: 'none',
-                        }
-                    }}
-                    showLineNumbers={true}
-                    lineNumberStyle={{
-                        minWidth: '3em',
-                        paddingRight: '1em',
-                        color: resolvedTheme === 'light' ? '#94a3b8' : '#6e7681',
-                        textAlign: 'right'
-                    }}
-                >
-                    {code}
-                </SyntaxHighlighter>
+                {mounted ? (
+                    <SyntaxHighlighter
+                        language={language}
+                        style={resolvedTheme === 'light' ? vs : vscDarkPlus}
+                        customStyle={{
+                            margin: 0,
+                            padding: '1.5rem',
+                            fontSize: '13px',
+                            lineHeight: '1.5',
+                            background: 'transparent', // Let container handle bg
+                            textShadow: 'none', // Remove "selected" look
+                        }}
+                        codeTagProps={{
+                            style: {
+                                background: 'transparent',
+                                textShadow: 'none',
+                            }
+                        }}
+                        showLineNumbers={true}
+                        lineNumberStyle={{
+                            minWidth: '3em',
+                            paddingRight: '1em',
+                            color: resolvedTheme === 'light' ? '#94a3b8' : '#6e7681',
+                            textAlign: 'right'
+                        }}
+                    >
+                        {code}
+                    </SyntaxHighlighter>
+                ) : (
+                    // Fallback for SSR to prevent hydration mismatch
+                    <pre
+                        className="m-0 p-6 text-[13px] leading-relaxed overflow-auto bg-transparent font-mono"
+                        style={{ color: '#94a3b8' }} // Neutral color
+                    >
+                        {code}
+                    </pre>
+                )}
 
                 {/* Gradient Overlay (only if collapsed) */}
                 {!expanded && (

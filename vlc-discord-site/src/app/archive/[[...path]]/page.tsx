@@ -20,6 +20,25 @@ const Background = () => (
     </div>
 );
 
+// --- Metadata ---
+export async function generateMetadata({ params }: { params: Promise<{ path?: string[] }> }) {
+    const resolvedParams = await params;
+    const currentPath = resolvedParams.path || [];
+
+    if (currentPath.length === 0) {
+        return {
+            title: "Archive",
+            description: "Browse the source code and assets for VLC Discord RPC.",
+        };
+    }
+
+    const itemName = currentPath[currentPath.length - 1];
+    return {
+        title: `${itemName}`,
+        description: `View ${itemName} in the VLC Discord RPC Archive.`,
+    };
+}
+
 export default async function ArchivePage({ params }: { params: Promise<{ path?: string[] }> }) {
     const resolvedParams = await params;
     const currentPath = resolvedParams.path || [];
@@ -69,6 +88,7 @@ export default async function ArchivePage({ params }: { params: Promise<{ path?:
                         </div>
                         <div className="flex-1 min-h-0 p-8 flex flex-col items-center justify-center bg-white/50 dark:bg-slate-950/50 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-y-auto">
                             <div className="relative w-full max-w-3xl flex-shrink-0 aspect-video flex items-center justify-center bg-slate-100/50 dark:bg-slate-950/30 bg-[url('/assets/grid.svg')] bg-center rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={rawUrl} alt={filename} className="max-w-full max-h-full object-contain shadow-md" />
                             </div>
                             <div className="mt-8 flex gap-4 flex-shrink-0">
