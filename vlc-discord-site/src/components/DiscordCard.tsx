@@ -1,29 +1,57 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Gamepad2, Music } from "lucide-react";
 
 type PlaybackState = 'playing' | 'paused' | 'stopped';
+type Mode = 'video' | 'music';
 
 const STATES: PlaybackState[] = ['playing', 'paused', 'stopped'];
 
-export default function DiscordCard() {
-    const [status, setStatus] = useState<PlaybackState>('playing');
-    const [timeLeft, setTimeLeft] = useState(105 * 60 + 20); // 01:45:20 in seconds
-    const [elapsedTime, setElapsedTime] = useState(22); // Start at 22s for Idling
+interface DiscordCardProps {
+    mode: Mode;
+}
 
-    // Timer logic (Countdown for playing, Elapsed for idling)
+// Music mode data
+const musicData = {
+    artist: "Chilli Beans.",
+    track: "Raise",
+    album: "for you",
+    duration: 3 * 60 + 34, // 03:34
+    timestamp: 48 // 00:48
+};
+
+// Video mode data
+const videoData = {
+    title: "IT Welcome to Derry",
+    details: "S01E07 • Ch 1 • EN",
+    duration: 61 * 60 + 3 // 01:01:03
+};
+
+export default function DiscordCard({ mode }: DiscordCardProps) {
+    const [status, setStatus] = useState<PlaybackState>('playing');
+
+    // Initialize elapsed time based on mode. 
+    // Since we use key={mode} in parent, this component remounts on mode change,
+    // so initial state is set correctly each time without useEffect.
+    const [elapsedTime, setElapsedTime] = useState(
+        mode === 'music' ? musicData.timestamp : 21 * 60 + 28
+    );
+
+    const totalDuration = mode === 'music' ? musicData.duration : videoData.duration;
+
+    // Timer logic (Elapsed time simulation)
     useEffect(() => {
         const timer = setInterval(() => {
             if (status === 'playing') {
-                setTimeLeft((prev) => (prev > 0 ? prev - 1 : 105 * 60 + 20));
-            }
-            if (status === 'stopped') {
+                setElapsedTime((prev) => (prev < totalDuration ? prev + 1 : 0));
+            } else if (status === 'stopped') {
                 setElapsedTime((prev) => prev + 1);
             }
         }, 1000);
         return () => clearInterval(timer);
-    }, [status]);
+    }, [status, totalDuration]);
 
     // State cycling logic (demo effect)
     useEffect(() => {
@@ -40,7 +68,6 @@ export default function DiscordCard() {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
         const s = (seconds % 60).toString().padStart(2, '0');
-        // If hours is 0, Discord usually shows M:SS, but let's stick to H:MM:SS or MM:SS based on magnitude
         if (h > 0) return `${h}:${m}:${s}`;
         return `${parseInt(m)}:${s}`;
     };
@@ -54,73 +81,104 @@ export default function DiscordCard() {
         }
     };
 
-    // Content based on Reference Image
-    const title = "VLC Media Player";
-    let detailText = "";
-    let stateText = "";
-    let timeText = "";
-    let showButton = true;
+    // Calculate progress percentage
+    const progressPercent = Math.min((elapsedTime / totalDuration) * 100, 100);
 
-    if (status === 'stopped') {
-        detailText = "Idling";
-        stateText = "Waiting for media...";
-        timeText = `${formatTime(elapsedTime)} elapsed`;
-        showButton = false;
+    // Dynamic content based on status & mode
+    const isStopped = status === 'stopped';
+    const isPaused = status === 'paused';
+
+    // Header text
+    const headerText = isStopped
+        ? 'Playing'
+        : (mode === 'music' ? `Listening to ${musicData.track}` : `Watching ${videoData.title}`);
+
+    // Main content values
+    let title, subtitle, subDetailText;
+
+    if (mode === 'music') {
+        title = isStopped ? 'VLC Media Player' : `${musicData.track}`;
+        subtitle = isStopped ? 'Idling' : `by ${musicData.artist} ${!isStopped ? `(${status === 'playing' ? 'Playing' : 'Paused'})` : ''}`;
+        subDetailText = isStopped ? 'Waiting for media...' : musicData.album;
     } else {
-        detailText = "Stranger Things (2016) • 4K";
-        // Match reference: S05E03 • Ch 1 • EN (Playing/Paused)
-        stateText = `S05E03 • Ch 1 • EN (${status === 'playing' ? 'Playing' : 'Paused'})`;
-        // User asked for "left" for playing, reference shows green time.
-        timeText = `${formatTime(timeLeft)} left`;
-        showButton = true;
+        title = isStopped ? 'VLC Media Player' : `${videoData.title} • 4K • HDR`;
+        subtitle = isStopped ? 'Idling' : videoData.details;
+        const stateText = isStopped ? 'Waiting for media...' : `(${status === 'playing' ? 'Playing' : 'Paused'})`;
+        const detailText = isStopped ? subtitle : `${subtitle} ${stateText}`;
+        subtitle = detailText;
+        subDetailText = isStopped ? 'Waiting for media...' : null;
     }
 
+    // Image Source
+    const imageSrc = mode === 'music'
+        ? (isStopped ? "/assets/default/vlc_icon.png" : "/assets/default/album_art.png")
+        : "/assets/default/vlc_icon.png";
+
     return (
-        <div className="bg-white dark:bg-[#111214] text-slate-900 dark:text-white p-4 rounded-lg w-[340px] shadow-2xl border border-slate-200 dark:border-[#1e1f22] font-sans relative overflow-hidden group text-left transition-colors duration-300">
+        <div className="bg-white dark:bg-[#111214] text-slate-900 dark:text-white p-4 rounded-lg w-[340px] shadow-2xl border border-slate-200 dark:border-none font-sans relative overflow-hidden group text-left transition-colors duration-300">
 
-            {/* Decorative Glow */}
-            <div className={`absolute top-0 right-0 w-24 h-24 bg-orange-500/10 blur-[50px] rounded-full pointer-events-none transition-opacity duration-1000 ${status === 'playing' ? 'opacity-100' : 'opacity-20'}`}></div>
-
-            <h3 className="text-[11px] font-bold text-slate-500 dark:text-[#b5bac1] uppercase mb-3 tracking-wide antialiased">
-                Playing a game
+            {/* Header */}
+            <h3 className="text-[12px] font-bold text-slate-500 dark:text-[#b5bac1] uppercase mb-4 tracking-wide antialiased">
+                {headerText}
             </h3>
 
-            <div className="flex gap-3 items-center">
-                {/* Large Image (VLC Cone) */}
-                <div className="relative">
-                    <div className="w-[60px] h-[60px] rounded-[8px] bg-slate-100 dark:bg-black overflow-hidden relative">
-                        <Image src="/assets/default/vlc_icon.png" width={60} height={60} alt="VLC" className="object-cover" />
+            <div className="flex gap-4 items-start">
+                {/* Large Image */}
+                <div className="relative shrink-0">
+                    <div className="w-[80px] h-[80px] rounded-[12px] bg-slate-100 dark:bg-black overflow-hidden relative">
+                        <Image src={imageSrc} width={80} height={80} alt="Media" className="object-cover" />
                     </div>
                     {/* Small Image (Circle Status) */}
-                    <div className="absolute -bottom-1 -right-1 w-[24px] h-[24px] rounded-full bg-white dark:bg-[#111214] border-[3px] border-white dark:border-[#111214] flex items-center justify-center overflow-hidden">
-                        <Image src={getStatusIcon()} width={24} height={24} alt="Status" className="rounded-full bg-transparent" />
+                    <div className="absolute -bottom-1 -right-1 w-[28px] h-[28px] rounded-full bg-white dark:bg-[#111214] border-[4px] border-white dark:border-[#111214] flex items-center justify-center overflow-hidden">
+                        <Image src={getStatusIcon()} width={28} height={28} alt="Status" className="rounded-full bg-transparent" />
                     </div>
                 </div>
 
                 {/* Text Content */}
-                <div className="flex-1 min-w-0 flex flex-col justify-center h-[60px]">
-                    <div className="text-[13px] font-bold text-slate-900 dark:text-[#f2f3f5] truncate leading-tight">{title}</div>
-                    <div className="text-[13px] text-slate-700 dark:text-[#f2f3f5] truncate leading-tight">{detailText}</div>
-                    <div className="text-[13px] text-slate-700 dark:text-[#f2f3f5] truncate leading-tight">{stateText}</div>
-                    {status !== 'stopped' && (
-                        <div className="text-[13px] truncate leading-tight text-emerald-600 dark:text-[#23a559]">{timeText}</div>
+                <div className="flex-1 min-w-0 flex flex-col justify-between h-[80px]">
+                    <div className="flex flex-col gap-0.5">
+                        <div className="text-[14px] font-bold text-slate-900 dark:text-[#f2f3f5] truncate leading-tight hover:underline cursor-pointer">
+                            {title}
+                        </div>
+                        <div className="text-[13px] text-slate-700 dark:text-[#b5bac1] truncate leading-tight">
+                            {subtitle}
+                        </div>
+                        {subDetailText && (
+                            <div className="text-[13px] text-slate-700 dark:text-[#b5bac1] truncate leading-tight">
+                                {subDetailText}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Time & Progress Bar - Only when Playing */}
+                    {status === 'playing' && (
+                        <div className="flex items-center gap-2 text-[12px] text-slate-600 dark:text-[#b5bac1] font-mono mt-auto">
+                            <span>{formatTime(elapsedTime)}</span>
+                            <div className="flex-1 h-[4px] bg-slate-200 dark:bg-[#404249] rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-slate-400 dark:bg-white rounded-full transition-all duration-1000 ease-linear"
+                                    style={{ width: `${progressPercent}%` }}
+                                />
+                            </div>
+                            <span>{formatTime(totalDuration)}</span>
+                        </div>
                     )}
-                    {status === 'stopped' && (
-                        <div className="text-[13px] truncate leading-tight flex items-center gap-1">
-                            {/* Green elapsed timer for idling as per reference */}
-                            <span className="text-emerald-600 dark:text-[#23a559]">{formatTime(elapsedTime)} elapsed</span>
+
+                    {/* Idle/Paused Timer (Icon + Elapsed) */}
+                    {(isStopped || isPaused) && (
+                        <div className="text-[13px] mt-auto font-mono text-emerald-600 dark:text-[#23a559] flex items-center gap-2">
+                            {mode === 'music' ? <Music size={16} className="opacity-80" /> : <Gamepad2 size={16} className="opacity-80" />}
+                            {formatTime(elapsedTime)} elapsed
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Buttons */}
-            {/* Buttons - Always rendered to preserve height */}
-            <div className={`mt-3 space-y-2 ${showButton ? '' : 'invisible'}`}>
+            <div className="mt-4">
                 <button
-                    onClick={() => window.open("https://www.google.com/search?q=Stranger+Things+S05E03+ch1", "_blank")}
-                    className="w-full h-8 rounded bg-slate-100 dark:bg-[#383a40] text-sm text-slate-900 dark:text-white font-medium hover:bg-slate-200 dark:hover:bg-[#474a52] transition-colors truncate"
-                    tabIndex={showButton ? 0 : -1}
+                    onClick={() => window.open(`https://www.google.com/search?q=${mode === 'music' ? 'Chilli+Beans+Raise' : 'IT+Welcome+to+Derry'}`, "_blank")}
+                    className="w-full h-[32px] rounded bg-slate-100 dark:bg-[#383a40] text-sm text-slate-900 dark:text-[#f2f3f5] font-medium hover:bg-slate-200 dark:hover:bg-[#474a52] transition-colors truncate flex items-center justify-center hover:underline cursor-pointer"
                 >
                     Search This
                 </button>

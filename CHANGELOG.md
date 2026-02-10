@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.1.0 (2026-02-09)
+
+**What's New:**
+
+_Visual Enhancements_
+
+* Cover Art Integration **(new)** : Discord now displays actual album art and movie posters when available (for files with embedded artwork).
+* Privacy Options: Added a new setting to disable cover art display and revert to the classic VLC icon.
+* Progress Bar: Replaced plain timestamps with a functional progress bar.
+
+_Smarter Status Updates_
+
+* Contextual Status: Activity status now adapts automatically **(new)** :
+
+  * Listening to [Song Title] for music.
+  * Watching [Movie Title] for videos.
+
+* Audio Language: Active audio track language (e.g., English, Japanese) is now shown for video files.
+
+_Improvements & Fixes_
+
+* Improved Layout:
+
+  * Music: Displays Song, Artist, and Album (album shown on hover).
+  * TV Shows: Automatically detects and shows Season/Episode format (e.g., S01E05).
+
+* Technical Fixes:
+
+  * Quality Indicators: Fixed display of tags for 4K, HDR, 10-bit, and 1080p content.
+
+
 ## v1.0.3 (2026-01-29)
 
 **Mod Stability & Core Improvements**

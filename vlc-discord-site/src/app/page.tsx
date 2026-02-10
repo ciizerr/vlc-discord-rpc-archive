@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Download } from "lucide-react";
-import DiscordCard from "@/components/DiscordCard";
+import DiscordCardWrapper from "@/components/DiscordCardWrapper";
 import RepoExplorer from "@/components/RepoExplorer";
 import DotGrid from "@/components/DotGrid";
 import Navbar from "@/components/Navigation";
@@ -52,8 +52,8 @@ export default async function Home() {
               Powered by Windhawk.
             </p>
 
-            <div className="relative mt-12 group inline-block transition-all duration-300 ease-out hover:scale-115 hover:-translate-y-1">
-              <DiscordCard />
+            <div className="mt-12">
+              <DiscordCardWrapper />
             </div>
 
             <div className="mt-10 flex gap-6 justify-center items-center">
