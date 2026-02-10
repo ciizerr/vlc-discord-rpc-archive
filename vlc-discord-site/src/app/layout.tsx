@@ -18,13 +18,27 @@ export const metadata: Metadata = {
     default: "VLC Discord RPC",
     template: "%s | VLC Discord RPC",
   },
-  description: "The native, lightweight bridge between VLC Media Player and your Discord Status.",
-  keywords: ["VLC", "Discord", "RPC", "Rich Presence", "Windhawk", "Mod", "VLC Media Player"],
+  description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. A lightweight, privacy-focused Windhawk mod that displays real-time media playback, TV show details (SxxExx), and video resolution on your Discord status without bloatware or background scripts.",
+  keywords: [
+    "VLC",
+    "Discord",
+    "RPC",
+    "Rich Presence",
+    "Windhawk",
+    "Mod",
+    "VLC Media Player",
+    "Discord Status",
+    "Now Playing",
+    "Scrobbler",
+    "Privacy",
+    "No Bloatware",
+    "Open Source"
+  ],
   authors: [{ name: "ciizerr", url: "https://github.com/ciizerr" }],
   creator: "ciizerr",
   openGraph: {
-    title: "VLC Discord RPC",
-    description: "The native, lightweight bridge between VLC Media Player and your Discord Status.",
+    title: "VLC Discord RPC - The Native Integration",
+    description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. A lightweight, privacy-focused Windhawk mod that displays real-time media playback, TV show details (SxxExx), and video resolution on your Discord status without bloatware or background scripts.",
     url: 'https://vlc-rpc.vercel.app',
     siteName: 'VLC Discord RPC',
     locale: 'en_US',
@@ -41,13 +55,18 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "VLC Discord RPC",
-    description: "The native, lightweight bridge between VLC Media Player and your Discord Status.",
+    description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. Lightweight, privacy-focused, no bloatware.",
     images: ['/assets/vlc-discord-icon.png'],
   },
   icons: {
     icon: "/assets/vlc-discord-icon.png",
     shortcut: "/assets/vlc-discord-icon.png",
     apple: "/assets/vlc-discord-icon.png",
+  },
+  verification: {
+    other: {
+      "msvalidate.01": "018B94031E4FFCDCF660A7D290E5D0F8",
+    },
   },
 };
 
