@@ -64,6 +64,7 @@ export const metadata: Metadata = {
     apple: "/assets/vlc-discord-icon.png",
   },
   verification: {
+    google: "4MbvFMjLTtglVTgNPS1jcYGnG94opIsQVjpRGXFjXFQ",
     other: {
       "msvalidate.01": "018B94031E4FFCDCF660A7D290E5D0F8",
     },
