@@ -1,7 +1,7 @@
-# 🎵 VLC Discord Rich Presence to (Node.js & WinHawk)
+# <img src="https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/vlc-discord-site/public/assets/vlc-discord-icon.png" alt="VLC Discord Icon" width="45" height="45"> VLC Discord Rich Presence to (Node.js & WindHawk) <img src="https://windhawk.net/logo-white.07a58d8408c12a46b52785c91e5f2e9e.svg" alt="Windhawk Icon" width="45" height="45">
 
-<div align="center">
-
+<div align="center">  
+    
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/ciizerr/vlc-discord-rpc-archive?style=for-the-badge&color=blueviolet)
 ![GitHub license](https://img.shields.io/github/license/ciizerr/vlc-discord-rpc-archive?style=for-the-badge&color=green)
 ![GitHub stars](https://img.shields.io/github/stars/ciizerr/vlc-discord-rpc-archive?style=for-the-badge&color=yellow)
@@ -31,7 +31,12 @@ Display rich presence data directly from VLC to your Discord profile.
 - **🛡️ Privacy Controls**: Option to hide cover art if preferred.
 
 ---
+## ↪ Preview
 
+![Default](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/default.gif)
+![Dark](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/dark_.gif)
+
+---
 ## 🚀 Installation
 
 ### Prerequisites
