@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.1 (2026-02-23)
+
+**What's New:**
+
+_Metadata & Visuals_
+
+* External Artwork Fetching **(new)** : If a media file lacks embedded artwork, the mod now seamlessly attempts to find and display relevant cover art or movie posters online.
+* Advanced Metadata Cleaning: Introduced aggressive filtering to remove junk text (like website names, resolutions, or release group tags) from titles and artist names, resulting in a much cleaner Rich Presence.
+* Release Year Parsing: Added support for extracting the release year from filenames to improve metadata accuracy and artwork matching.
+
+
 ## v1.1.0 (2026-02-09)
 
 **What's New:**
