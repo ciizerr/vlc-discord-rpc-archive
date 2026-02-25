@@ -1,0 +1,83 @@
+[SITES]
+olamovies
+vegamovies
+moviesmod
+katmoviehd
+mkvcinemas
+filmyzilla
+filmywap
+1tamilmv
+jiorockers
+ibomma
+yts
+yify
+psa
+qxr
+tigole
+rarbg
+pahe
+pagalworld
+mrjatt
+djpunjab
+wapking
+songspk
+djmaza
+pendujatt
+naasongs
+masstamilan
+jiosaavn
+moviesverse
+
+[TLDS]
+.top
+.com
+.net
+.org
+.in
+.nl
+.is
+.to
+.pw
+.cc
+.site
+.info
+.biz
+.co
+.nz
+.uk
+.mx
+.ws
+.pro
+
+[SCENE]
+2160p
+1080p
+720p
+480p
+4k
+bluray
+web-dl
+webrip
+hdrip
+camrip
+brrip
+
+[WORDS]
+downloaded from
+download from
+shared by
+brought to you by
+visit website
+downloaded
+download
+320kbps
+128kbps
+kbps
+official video
+lyric video
+ringtone
+full song
+x264
+x265
+hevc
+10bit
