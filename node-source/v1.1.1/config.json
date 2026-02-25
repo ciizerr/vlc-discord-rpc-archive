@@ -1,0 +1,16 @@
+{
+    "CLIENT_ID": "1465711556418474148",
+    "VLC_PASSWORD": ":1234",
+    "VLC_PORT": 8080,
+    "POLLING_INTERVAL": 1000,
+    "SHOW_COVER_ART": true,
+    "THEME": "",
+    "PROVIDER": "Google",
+    "CUSTOM_URL": "",
+    "BUTTON_LABEL": "Search This",
+    "CUSTOM_JUNK_WORDS": [
+        "mysite",
+        "ripper_name",
+        "8k"
+    ]
+}
