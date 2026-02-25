@@ -15,21 +15,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://vlc-rpc.vercel.app'),
   title: {
-    default: "VLC Discord RPC",
+    default: "VLC Discord RPC | Native Rich Presence Mod",
     template: "%s | VLC Discord RPC",
   },
-  description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. A lightweight, privacy-focused Windhawk mod that displays real-time media playback, TV show details (SxxExx), and video resolution on your Discord status without bloatware or background scripts.",
+  description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. A lightweight, privacy-focused Windhawk mod to show VLC playback in Discord. No NPM packages or background Node.js scripts needed.",
   keywords: [
-    "VLC",
-    "Discord",
-    "RPC",
-    "Rich Presence",
+    "VLC Discord RPC",
+    "VLC Rich Presence",
+    "VLC to Discord",
+    "Discord Rich Presence for VLC Media Player",
+    "Show VLC playback in Discord",
     "Windhawk",
     "Mod",
     "VLC Media Player",
     "Discord Status",
     "Now Playing",
-    "Scrobbler",
     "Privacy",
     "No Bloatware",
     "Open Source"
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   authors: [{ name: "ciizerr", url: "https://github.com/ciizerr" }],
   creator: "ciizerr",
   openGraph: {
-    title: "VLC Discord RPC - The Native Integration",
-    description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. A lightweight, privacy-focused Windhawk mod that displays real-time media playback, TV show details (SxxExx), and video resolution on your Discord status without bloatware or background scripts.",
+    title: "VLC Discord RPC | Native Rich Presence Mod",
+    description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. A lightweight, privacy-focused Windhawk mod to show VLC playback in Discord. No NPM packages or background Node.js scripts needed.",
     url: 'https://vlc-rpc.vercel.app',
     siteName: 'VLC Discord RPC',
     locale: 'en_US',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "VLC Discord RPC",
+    title: "VLC Discord RPC | Native Rich Presence Mod",
     description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. Lightweight, privacy-focused, no bloatware.",
     images: ['/assets/vlc-discord-icon.png'],
   },
@@ -72,6 +72,7 @@ export const metadata: Metadata = {
 };
 
 import { SettingsProvider } from "@/context/SettingsContext";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -80,6 +81,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "vmpz1tyqw1");
+          `}
+        </Script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

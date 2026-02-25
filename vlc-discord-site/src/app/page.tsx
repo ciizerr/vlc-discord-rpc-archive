@@ -17,7 +17,7 @@ export default async function Home() {
   const changelogContent = await getChangelogContent();
 
   return (
-    <div className="min-h-screen text-foreground font-sans selection:bg-orange-500/30 overflow-x-hidden relative">
+    <main className="min-h-screen text-foreground font-sans selection:bg-orange-500/30 overflow-x-hidden relative">
 
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -48,7 +48,7 @@ export default async function Home() {
             </h1>
 
             <p className="text-xl text-muted-foreground mt-6 max-w-2xl mx-auto drop-shadow-md font-medium">
-              The native, lightweight bridge between VLC Media Player and your Discord Status.
+              The native, lightweight bridge for VLC Rich Presence on your Discord Status.
               Powered by Windhawk.
             </p>
 
@@ -98,7 +98,7 @@ export default async function Home() {
           {/* Section 2: Features */}
           <div id="features" className="pt-24 md:pt-32">
             <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Features</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">VLC Rich Presence Features</h2>
               <span className="text-slate-500 font-mono text-xs hidden md:block">Why it&apos;s better</span>
             </div>
             <MagicBento
@@ -157,7 +157,7 @@ export default async function Home() {
           {/* Section 3: The Archive */}
           <div className="mt-32">
             <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Inspect the Source</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Inspect the VLC RPC Source</h2>
               <span className="text-slate-500 font-mono text-xs hidden md:block">vlc-discord-rpc-archive/</span>
             </div>
 
@@ -182,6 +182,6 @@ export default async function Home() {
         <Footer />
 
       </div>
-    </div>
+    </main>
   );
 }
