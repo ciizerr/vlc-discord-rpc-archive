@@ -157,7 +157,7 @@ export default async function Home() {
           {/* Section 3: The Archive */}
           <div className="mt-32">
             <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Inspect the VLC RPC Source</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Inspect the Source</h2>
               <span className="text-slate-500 font-mono text-xs hidden md:block">vlc-discord-rpc-archive/</span>
             </div>
 

@@ -81,3 +81,5 @@ x264
 x265
 hevc
 10bit
+vostfr
+@HDRMoviezZ

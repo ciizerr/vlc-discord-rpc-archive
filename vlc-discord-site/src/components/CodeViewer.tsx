@@ -49,6 +49,7 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
             <div className={`relative overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-full' : 'max-h-[500px]'}`}>
                 {mounted ? (
                     <SyntaxHighlighter
+                        key={resolvedTheme}
                         language={language}
                         style={resolvedTheme === 'light' ? vs : vscDarkPlus}
                         customStyle={{
