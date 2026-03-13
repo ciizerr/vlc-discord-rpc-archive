@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.1.3 (2026-03-13)
+
+**What's New:**
+
+_Fixes & Performance Improvements_
+
+- Discord Status Updates: Your status now updates instantly when a song or video changes. Cover art uploading now runs in the background, so Discord no longer freezes while waiting for images.
+- Local Album Art: Some users could not upload local artwork because our previous image host (~~`0x0.st`~~) was silently blocking certain connections. We have switched to `uguu.se`, which is more reliable and automatically deletes images after 24 hours.
+
+_Visual Enhancements_
+
+- Minimal Mode Toggle **(new)** : You can now enable Minimal Mode in the settings. Instead of choosing a separate theme, this toggle hides the play/pause/stop badges while keeping your current theme (such as Dark Mode) active. This allows the cover art to fill the entire square.
+
+_Improvements & Fixes_
+
+- Formatting and Search: Episode formatting now uses proper spacing (e.g., S01 E01 instead of S01E01). This improves readability and makes the Search This button results more accurate.
+
 ## v1.1.2 (2026-02-27)
 
 **What's New:**
