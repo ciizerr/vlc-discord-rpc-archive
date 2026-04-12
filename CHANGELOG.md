@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.4 (2026-04-11)
+
+**What's New:**
+
+_New Features_
+
+- **Toast Notifications:** Added an option to enable Windows toast notifications. When enabled, a sleek notification will appear on your desktop whenever a new media file starts playing, showing the title, metadata, and cover art.
+
+_Enhanced Customization_
+
+- **Modular Layout Toggles:** Added new settings to independently hide the current Chapter number and Audio Language. This allows for a cleaner layout if you prefer to only show specific details.
+
 ## v1.1.3 (2026-03-13)
 
 **What's New:**
@@ -7,7 +19,7 @@
 _Fixes & Performance Improvements_
 
 - Discord Status Updates: Your status now updates instantly when a song or video changes. Cover art uploading now runs in the background, so Discord no longer freezes while waiting for images.
-- Local Album Art: Some users could not upload local artwork because our previous image host (~~`0x0.st`~~) was silently blocking certain connections. We have switched to `uguu.se`, which is more reliable and automatically deletes images after 24 hours.
+- Local Album Art: Some users could not upload local artwork because our previous image host (~~`0x0.st`~~) was silently blocking certain connections. We have switched to `uguu.se`, which is more reliable and automatically deletes images after ~~24~~ 3 hours.
 
 _Visual Enhancements_
 

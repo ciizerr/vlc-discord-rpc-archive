@@ -76,7 +76,7 @@ If you are not on Windows, or prefer running it as a standalone script, you can 
 1. **Clone the repository**:
     ```bash
     git clone https://github.com/ciizerr/vlc-discord-rpc-archive.git
-    cd vlc-discord-rpc-archive/node-source/v1.1.1
+    cd vlc-discord-rpc-archive/node-source/v1.1.4
     ```
 
 2. **Install dependencies**:
@@ -94,7 +94,7 @@ If you are not on Windows, or prefer running it as a standalone script, you can 
 ---
 ## ⚙️ Configuration (Node.js)
 
-For the Node.js version, customize behavior by editing the `config.json` file in the `v1.1.1` folder.
+For the Node.js version, customize behavior by editing the `config.json` file in the `v1.1.4` folder.
 
 | Key | Description | Default |
 | :--- | :--- | :--- |
