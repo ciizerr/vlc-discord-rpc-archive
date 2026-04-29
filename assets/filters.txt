@@ -7,15 +7,29 @@ mkvcinemas
 filmyzilla
 filmywap
 1tamilmv
+tamilmv
+tamilrockers
 jiorockers
 ibomma
 yts
 yify
+ytsmx
 psa
+psarips
 qxr
 tigole
 rarbg
+rarbgto
+1337x
+torrentgalaxy
+tgx
+limetorrents
+extratorrents
+zooqle
+torlock
+eztv
 pahe
+pahe.ph
 pagalworld
 mrjatt
 djpunjab
@@ -27,6 +41,25 @@ naasongs
 masstamilan
 jiosaavn
 moviesverse
+worldfree4u
+9xmovies
+9kmovies
+hdhub4u
+skymovieshd
+downloadhub
+bolly4u
+khatrimaza
+moviesflix
+flixhq
+soap2day
+fmovies
+putlocker
+yesmovies
+gomovies
+hurawatch
+primewire
+afdah
+lookmovie
 
 [TLDS]
 .top
@@ -48,19 +81,41 @@ moviesverse
 .mx
 .ws
 .pro
+.xyz
+.live
+.fun
+.click
+.gq
+.ml
+.cf
+.ga
+.tk
 
 [SCENE]
 2160p
 1080p
 720p
 480p
+360p
 4k
+uhd
 bluray
+blu-ray
+bdrip
+brrip
 web-dl
 webrip
 hdrip
 camrip
-brrip
+hdcam
+dvdrip
+dvdscr
+hdtv
+remux
+hdr
+dv
+dolby
+atmos
 
 [WORDS]
 downloaded from
@@ -83,3 +138,42 @@ hevc
 10bit
 vostfr
 @HDRMoviezZ
+download link
+direct download
+watch online free
+watch free
+free download
+dual audio
+multi audio
+hindi dubbed
+english dubbed
+full movie download
+full movie online
+stream online
+stream free
+click here to download
+300mb movies
+700mb movies
+1gb movie
+compressed movie
+zip file download
+telegram link
+join telegram
+drive link
+gdrive link
+mega link
+mediafire link
+uptobox link
+rapidgator
+nitroflare
+ddl
+torrent download
+magnet link
+seeders
+leechers
+cam print
+hd print
+mp3 download
+dj remix
+subbed
+dubbed
