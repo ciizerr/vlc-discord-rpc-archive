@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.1.5 (2026-05-11)
+
+### New
+- Music activity on Discord now shows:  
+  - **Listening to [Song title]**  
+  - **Listening to [Artist]**  
+  - **Listening to [Album]**  
+- VLC port is detected in most setups, so you don’t need to enter the port number manually.  
+- The mod now reads your VLC Lua HTTP password directly, so you can use any password without extra setup.  
+
+### Fixes
+- Toast notifications no longer repeat or display the wrong track.  
+- The image scraper now provides more accurate artwork instead of random results.  
+- Port detection works correctly across different VLC configurations, including non‑default ports.  
+
+### Improvements
+- Added `wh_log()` entries to make debugging and tracking media simpler.  
+- Artwork handling has been refined for sharper and more consistent images.  
+
+Special thanks to **@josephct** for suggesting the music activity feature and for identifying the VLC port issue that could stop Rich Presence from working. 
+
+
 ## v1.1.4 (2026-04-11)
 
 **What's New:**
