@@ -32,7 +32,7 @@ export default async function Home() {
               { src: "/vlc_logo.png", alt: "VLC Media Player" },
               { src: "/assets/discord.svg", alt: "Discord" },
               { src: "/assets/windhawk.svg", alt: "Windhawk" },
-              { src: "/assets/windows.svg", alt: "Windows" },
+              { src: "/assets/Windows.svg", alt: "Windows" },
 
             ]}
             direction="right"
