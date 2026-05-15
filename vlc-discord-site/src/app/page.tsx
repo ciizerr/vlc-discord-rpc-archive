@@ -1,187 +1,167 @@
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import DiscordCardWrapper from "@/components/DiscordCardWrapper";
 import RepoExplorer from "@/components/RepoExplorer";
-import DotGrid from "@/components/DotGrid";
 import Navbar from "@/components/Navigation";
-import GlassSurface from "@/components/GlassSurface";
-import MagicBento from "@/components/MagicBento";
+import FeatureSection from "@/components/FeatureSection";
 import ChangelogViewer from "@/components/ChangelogViewer";
 import InstallationGuide from "@/components/InstallationGuide";
 import FAQ from "@/components/FAQ";
 import IconSubmission from "@/components/IconSubmission";
 import Footer from "@/components/Footer";
 import { getChangelogContent } from "@/lib/source-reader";
+import LogoLoop from "@/components/LogoLoop";
 
 export default async function Home() {
   const changelogContent = await getChangelogContent();
 
   return (
-    <main className="min-h-screen text-foreground font-sans selection:bg-orange-500/30 overflow-x-hidden relative">
+    <main className="min-h-screen text-white font-sans overflow-x-hidden relative">
 
-      {/* Background Layer */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <DotGrid
-          dotSize={30}
-          gap={40}
-          proximity={500}
-          shockRadius={50}
-          shockStrength={10}
-          resistance={750}
-          returnDuration={2}
-        />
-      </div>
+      {/* --- Floating Navbar --- */}
+      <Navbar />
 
-      <div className="relative z-10">
+      {/* ═══════════════════════════════════════
+          HERO SECTION
+          ═══════════════════════════════════════ */}
+      <section className="relative w-full pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+        {/* Background Gradient Mesh */}
+        <div className="hero-mesh" />
 
-        {/* --- Floating Navbar --- */}
-        <Navbar />
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-16 md:gap-12">
 
-        {/* --- Combined Sections: Hero, Features, Archive --- */}
+            {/* Left: Text Content */}
+            <div className="flex-1 text-center md:text-left max-w-xl">
+              {/* Eyebrow */}
+              <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FF9500] mb-5 animate-fade-up">
+                Windhawk Mod
+              </span>
 
-        {/* --- Section 1: The Hero --- */}
-        <section className="relative w-full pt-48 pb-32 text-center">
-          {/* Hero Content - Constrained */}
-          <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col items-center">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter drop-shadow-xl text-transparent bg-clip-text bg-gradient-to-r from-[rgba(82,39,255,1)] via-[rgba(255,159,252,1)] to-[rgba(255,149,0,1)]">
-              VLC DISCORD RPC
-            </h1>
+              {/* Title */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] leading-[1.1] text-white mb-6 animate-fade-up stagger-1">
+                Show what you&apos;re<br className="hidden md:block" /> watching.
+              </h1>
 
-            <p className="text-xl text-muted-foreground mt-6 max-w-2xl mx-auto drop-shadow-md font-medium">
-              The native, lightweight bridge for VLC Rich Presence on your Discord Status.
-              Powered by Windhawk.
-            </p>
+              {/* Subtitle */}
+              <p className="text-[16px] md:text-[17px] leading-relaxed text-[#a1a1aa] mb-10 max-w-md mx-auto md:mx-0 animate-fade-up stagger-2">
+                A native, zero-bloat bridge between VLC Media Player and Discord Rich Presence. No scripts. No overhead. Just works.
+              </p>
 
-            <div className="mt-12">
-              <DiscordCardWrapper />
-            </div>
-
-            <div className="mt-10 flex gap-6 justify-center items-center">
-              <Link href="https://windhawk.net/mods/vlc-discord-rpc">
-                <GlassSurface
-                  width="auto"
-                  height="auto"
-                  borderRadius={99}
-                  backgroundOpacity={0.3}
-                  brightness={110}
-                  opacity={0.5}
-                  className="px-8 py-3 text-foreground font-bold hover:brightness-125 transition-all text-sm hover:scale-105 active:scale-95 duration-300"
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start animate-fade-up stagger-3">
+                <Link
+                  href="https://windhawk.net/mods/vlc-discord-rpc"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#FF9500] hover:bg-[#e68600] text-[#09090b] text-[14px] font-semibold rounded-md transition-all duration-200 hover:shadow-[0_0_30px_rgba(255,149,0,0.3)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <div className="flex items-center gap-3">
-                    <span>Get Mod</span>
-                    <Download size={18} strokeWidth={2.5} />
-                  </div>
-                </GlassSurface>
-              </Link>
-
-              <Link href="/archive">
-                <GlassSurface
-                  width="auto"
-                  height="auto"
-                  borderRadius={99}
-
-                  backgroundOpacity={0.3}
-                  brightness={90}
-                  opacity={0.5}
-                  mixBlendMode="screen"
-                  className="px-8 py-3 text-muted-foreground font-bold border border-white/10 hover:border-white/30 hover:text-foreground transition-all text-sm hover:scale-105 active:scale-95 duration-300"
+                  Download via Windhawk
+                  <ArrowRight size={16} strokeWidth={2.5} />
+                </Link>
+                <Link
+                  href="/archive"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent border border-white/[0.1] text-white text-[14px] font-medium rounded-md transition-all duration-200 hover:bg-white/[0.04] hover:border-white/[0.15]"
                 >
                   View Source
-                </GlassSurface>
-              </Link>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Discord Card */}
+            <div className="flex-shrink-0 animate-fade-up stagger-3">
+              <div className="relative">
+                {/* Glow behind card */}
+                <div className="absolute inset-0 bg-[#FF9500]/[0.06] blur-3xl rounded-3xl scale-110 animate-float pointer-events-none" />
+                <DiscordCardWrapper />
+              </div>
             </div>
           </div>
-        </section>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
+          {/* Works With Strip */}
+          <div className="mt-24 md:mt-32 flex flex-col items-center gap-8 animate-fade-up stagger-5 w-full">
+            <span className="text-[12px] uppercase tracking-[0.25em] text-[#3f3f46] font-bold">
+              Works with
+            </span>
 
-          {/* Section 2: Features */}
-          <div id="features" className="pt-24 md:pt-32">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">VLC Rich Presence Features</h2>
-              <span className="text-slate-500 font-mono text-xs hidden md:block">Why it&apos;s better</span>
-            </div>
-            <MagicBento
-              textAutoHide={false}
-              enableStars={true}
-              enableTilt
-              enableSpotlight={true}
-              enableBorderGlow={true}
-              glowColor="255, 149, 0"
-              cards={[
-                {
-                  title: "Zero Bloat",
-                  description: "Injects directly into the VLC process via Windhawk. No background Node.js scripts eating your RAM.",
-                  label: "Performance",
-                  color: "#0a0a0a"
-                },
-                {
-                  title: "Local Logic",
-                  description: "Runs 100% locally. Your playback data never leaves your machine. No external APIs required.",
-                  label: "Privacy",
-                  color: "#0a0a0a"
-                },
-                {
-                  title: "Auto-State",
-                  description: "Automatically switches between Playing, Paused, and Stopped states instantly using VLC's internal events.",
-                  label: "Automation",
-                  color: "#0a0a0a"
-                },
-                {
-                  title: "Smart Recognition",
-                  description: "Automatically detects SxxExx format to display Show Name, Season, and Episode for TV shows.",
-                  label: "Intelligence",
-                  color: "#0a0a0a"
-                },
-                {
-                  title: "Instant Search",
-                  description: "Includes a configurable 'Search This' button that redirects to Google, IMDb, or YouTube.",
-                  label: "Interactive",
-                  color: "#0a0a0a"
-                },
-                {
-                  title: "Rich Details",
-                  description: "Displays advanced metadata including video resolution (4K/HDR) and active audio languages.",
-                  label: "Metadata",
-                  color: "#0a0a0a"
-                }
+            <LogoLoop
+              logos={[
+                { src: "/vlc_logo.png", alt: "VLC Media Player" },
+                { src: "/assets/discord.svg", alt: "Discord" },
+                { src: "/assets/windhawk.svg", alt: "Windhawk" },
               ]}
+              direction="right"
+              speed={100}
+              gap={190}
+              hoverSpeed={50}
+              logoHeight={50}
+              scaleOnHover={true}
+              grayscale={true}
+              fadeOut={true}
+              fadeOutColor="#09090b"
+              className="max-w-4xl"
             />
           </div>
+        </div>
+      </section>
 
+      {/* ═══════════════════════════════════════
+          MAIN CONTENT SECTIONS
+          ═══════════════════════════════════════ */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
 
-          {/* Section 2.5: Installation Guide */}
-          <InstallationGuide />
+        {/* Divider */}
+        <div className="section-divider" />
 
+        {/* Features */}
+        <FeatureSection />
 
-          {/* Section 3: The Archive */}
-          <div className="mt-32">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Inspect the Source</h2>
-              <span className="text-slate-500 font-mono text-xs hidden md:block">vlc-discord-rpc-archive/</span>
-            </div>
+        {/* Divider */}
+        <div className="section-divider" />
 
+        {/* Installation */}
+        <InstallationGuide />
 
-            <RepoExplorer />
+        {/* Divider */}
+        <div className="section-divider" />
+
+        {/* Source Code */}
+        <div className="py-24 md:py-32">
+          <div className="mb-12">
+            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#FF9500] mb-3">
+              Open Source
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
+              Inspect the Source
+            </h2>
+            <p className="text-[14px] text-[#71717a]">
+              Every line of code is public. Read it, audit it, improve it.
+            </p>
           </div>
-
-          {/* Section 4: Changelog */}
-          <div id="changelog" className="mt-32">
-            {changelogContent && <ChangelogViewer markdown={changelogContent} />}
-          </div>
-
-          {/* Section 4.5: Icon Submission */}
-          <IconSubmission />
-
-          {/* Section 5: FAQ */}
-          <FAQ />
-
+          <RepoExplorer />
         </div>
 
-        {/* --- Footer --- */}
-        <Footer />
+        {/* Divider */}
+        <div className="section-divider" />
+
+        {/* Changelog */}
+        <div id="changelog" className="py-24 md:py-32">
+          {changelogContent && <ChangelogViewer markdown={changelogContent} />}
+        </div>
+
+        {/* Icon Submission */}
+        <IconSubmission />
+
+        {/* Divider */}
+        <div className="section-divider" />
+
+        {/* FAQ */}
+        <FAQ />
 
       </div>
+
+      {/* --- Footer --- */}
+      <Footer />
+
     </main>
   );
 }

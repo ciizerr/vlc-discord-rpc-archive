@@ -6,9 +6,8 @@ const subscribe = () => () => { };
 const getSnapshot = () => true;
 const getServerSnapshot = () => false;
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus, vs } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useTheme } from "next-themes";
-import { Copy, ChevronDown, ChevronUp } from "lucide-react";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Copy, ChevronDown, ChevronUp, Check } from "lucide-react";
 
 interface CodeViewerProps {
     code: string;
@@ -16,12 +15,9 @@ interface CodeViewerProps {
 }
 
 export default function CodeViewer({ code, language }: CodeViewerProps) {
-    const { resolvedTheme } = useTheme();
     const [expanded, setExpanded] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    // Prevent hydration mismatch by only rendering SyntaxHighlighter on client
-    // useSyncExternalStore is the recommended way to handle "is client" checks without effects
     const mounted = useCommonSyncExternalStore(
         subscribe,
         getSnapshot,
@@ -35,52 +31,51 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
     };
 
     return (
-        <div className="relative group">
+        <div className="relative group border border-white/[0.06] rounded-xl overflow-hidden bg-[#0d0d0f]">
             {/* Copy Button */}
             <button
                 onClick={handleCopy}
-                className="absolute top-4 right-4 z-20 p-2 bg-slate-200 dark:bg-[#21262d] rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                className="absolute top-4 right-4 z-20 p-2 bg-[#111113] border border-white/[0.06] rounded-md text-[#a1a1aa] hover:text-white hover:border-[#FF9500]/30 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                 title="Copy code"
             >
-                {copied ? <span className="text-xs font-bold text-green-500">Copied!</span> : <Copy size={16} />}
+                {copied ? <Check size={16} className="text-[#FF9500]" /> : <Copy size={16} />}
             </button>
 
             {/* Code Block */}
             <div className={`relative overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-full' : 'max-h-[500px]'}`}>
                 {mounted ? (
                     <SyntaxHighlighter
-                        key={resolvedTheme}
                         language={language}
-                        style={resolvedTheme === 'light' ? vs : vscDarkPlus}
+                        style={vscDarkPlus}
                         customStyle={{
                             margin: 0,
                             padding: '1.5rem',
                             fontSize: '13px',
-                            lineHeight: '1.5',
-                            background: 'transparent', // Let container handle bg
-                            textShadow: 'none', // Remove "selected" look
+                            lineHeight: '1.6',
+                            background: 'transparent',
+                            textShadow: 'none',
                         }}
                         codeTagProps={{
                             style: {
                                 background: 'transparent',
                                 textShadow: 'none',
+                                fontFamily: 'var(--font-inter), monospace',
                             }
                         }}
                         showLineNumbers={true}
                         lineNumberStyle={{
-                            minWidth: '3em',
-                            paddingRight: '1em',
-                            color: resolvedTheme === 'light' ? '#94a3b8' : '#6e7681',
-                            textAlign: 'right'
+                            minWidth: '3.5em',
+                            paddingRight: '1.5em',
+                            color: '#3f3f46',
+                            textAlign: 'right',
+                            userSelect: 'none',
                         }}
                     >
                         {code}
                     </SyntaxHighlighter>
                 ) : (
-                    // Fallback for SSR to prevent hydration mismatch
                     <pre
-                        className="m-0 p-6 text-[13px] leading-relaxed overflow-auto bg-transparent font-mono"
-                        style={{ color: '#94a3b8' }} // Neutral color
+                        className="m-0 p-6 text-[13px] leading-relaxed overflow-auto bg-transparent font-mono text-[#52525b]"
                     >
                         {code}
                     </pre>
@@ -88,15 +83,15 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
 
                 {/* Gradient Overlay (only if collapsed) */}
                 {!expanded && (
-                    <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-50 dark:from-[#0d1117] to-transparent pointer-events-none" />
+                    <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0d0d0f] via-[#0d0d0f]/80 to-transparent pointer-events-none" />
                 )}
             </div>
 
             {/* Expand/Collapse Control */}
-            <div className="relative z-20 bg-slate-100 dark:bg-[#161b22] border-t border-slate-200 dark:border-slate-800 p-2 flex justify-center">
+            <div className="relative z-20 bg-[#111113] border-t border-white/[0.06] p-2 flex justify-center">
                 <button
                     onClick={() => setExpanded(!expanded)}
-                    className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200 dark:bg-[#21262d] text-slate-700 dark:text-slate-300 text-xs font-medium hover:bg-slate-300 dark:hover:bg-[#30363d] transition-colors"
+                    className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-white/[0.04] text-[#a1a1aa] text-xs font-semibold hover:bg-white/[0.08] hover:text-white transition-all border border-white/[0.06] hover:border-white/[0.1]"
                 >
                     {expanded ? (
                         <>

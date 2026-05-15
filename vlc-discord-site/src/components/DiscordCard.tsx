@@ -32,9 +32,6 @@ const videoData = {
 export default function DiscordCard({ mode }: DiscordCardProps) {
     const [status, setStatus] = useState<PlaybackState>('playing');
 
-    // Initialize elapsed time based on mode. 
-    // Since we use key={mode} in parent, this component remounts on mode change,
-    // so initial state is set correctly each time without useEffect.
     const [elapsedTime, setElapsedTime] = useState(
         mode === 'music' ? musicData.timestamp : 21 * 60 + 28
     );
@@ -60,7 +57,7 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
                 const nextIdx = (STATES.indexOf(prev) + 1) % STATES.length;
                 return STATES[nextIdx];
             });
-        }, 5000); // Change state every 5 seconds
+        }, 5000);
         return () => clearInterval(cycler);
     }, []);
 
@@ -81,19 +78,15 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
         }
     };
 
-    // Calculate progress percentage
     const progressPercent = Math.min((elapsedTime / totalDuration) * 100, 100);
 
-    // Dynamic content based on status & mode
     const isStopped = status === 'stopped';
     const isPaused = status === 'paused';
 
-    // Header text
     const headerText = isStopped
         ? 'Playing'
         : (mode === 'music' ? `Listening to ${musicData.track}` : `Watching ${videoData.title}`);
 
-    // Main content values
     let title, subtitle, subDetailText;
 
     if (mode === 'music') {
@@ -109,27 +102,26 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
         subDetailText = isStopped ? 'Waiting for media...' : null;
     }
 
-    // Image Source
     const imageSrc = mode === 'music'
         ? (isStopped ? "/assets/default/vlc_icon.png" : "/assets/default/album_art.png")
         : "/assets/default/vlc_icon.png";
 
     return (
-        <div className="bg-white dark:bg-[#111214] text-slate-900 dark:text-white p-4 rounded-lg w-[340px] shadow-2xl border border-slate-200 dark:border-none font-sans relative overflow-hidden group text-left transition-colors duration-300">
+        <div className="bg-[#111214] text-white p-4 rounded-lg w-[340px] shadow-2xl border border-white/[0.06] font-sans relative overflow-hidden text-left">
 
             {/* Header */}
-            <h3 className="text-[12px] font-bold text-slate-500 dark:text-[#b5bac1] uppercase mb-4 tracking-wide antialiased">
+            <h3 className="text-[12px] font-bold text-[#b5bac1] uppercase mb-4 tracking-wide antialiased">
                 {headerText}
             </h3>
 
             <div className="flex gap-4 items-start">
                 {/* Large Image */}
                 <div className="relative shrink-0">
-                    <div className="w-[80px] h-[80px] rounded-[12px] bg-slate-100 dark:bg-black overflow-hidden relative">
+                    <div className="w-[80px] h-[80px] rounded-[12px] bg-black overflow-hidden relative">
                         <Image src={imageSrc} width={80} height={80} alt="Media" className="object-cover" />
                     </div>
                     {/* Small Image (Circle Status) */}
-                    <div className="absolute -bottom-1 -right-1 w-[28px] h-[28px] rounded-full bg-white dark:bg-[#111214] border-[4px] border-white dark:border-[#111214] flex items-center justify-center overflow-hidden">
+                    <div className="absolute -bottom-1 -right-1 w-[28px] h-[28px] rounded-full bg-[#111214] border-[4px] border-[#111214] flex items-center justify-center overflow-hidden">
                         <Image src={getStatusIcon()} width={28} height={28} alt="Status" className="rounded-full bg-transparent" />
                     </div>
                 </div>
@@ -137,14 +129,14 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
                 {/* Text Content */}
                 <div className="flex-1 min-w-0 flex flex-col justify-between h-[80px]">
                     <div className="flex flex-col gap-0.5">
-                        <div className="text-[14px] font-bold text-slate-900 dark:text-[#f2f3f5] truncate leading-tight hover:underline cursor-pointer">
+                        <div className="text-[14px] font-bold text-[#f2f3f5] truncate leading-tight hover:underline cursor-pointer">
                             {title}
                         </div>
-                        <div className="text-[13px] text-slate-700 dark:text-[#b5bac1] truncate leading-tight">
+                        <div className="text-[13px] text-[#b5bac1] truncate leading-tight">
                             {subtitle}
                         </div>
                         {subDetailText && (
-                            <div className="text-[13px] text-slate-700 dark:text-[#b5bac1] truncate leading-tight">
+                            <div className="text-[13px] text-[#b5bac1] truncate leading-tight">
                                 {subDetailText}
                             </div>
                         )}
@@ -152,11 +144,11 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
 
                     {/* Time & Progress Bar - Only when Playing */}
                     {status === 'playing' && (
-                        <div className="flex items-center gap-2 text-[12px] text-slate-600 dark:text-[#b5bac1] font-mono mt-auto">
+                        <div className="flex items-center gap-2 text-[12px] text-[#b5bac1] font-mono mt-auto">
                             <span>{formatTime(elapsedTime)}</span>
-                            <div className="flex-1 h-[4px] bg-slate-200 dark:bg-[#404249] rounded-full overflow-hidden">
+                            <div className="flex-1 h-[4px] bg-[#404249] rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-slate-400 dark:bg-white rounded-full transition-all duration-1000 ease-linear"
+                                    className="h-full bg-white rounded-full transition-all duration-1000 ease-linear"
                                     style={{ width: `${progressPercent}%` }}
                                 />
                             </div>
@@ -164,9 +156,9 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
                         </div>
                     )}
 
-                    {/* Idle/Paused Timer (Icon + Elapsed) */}
+                    {/* Idle/Paused Timer */}
                     {(isStopped || isPaused) && (
-                        <div className="text-[13px] mt-auto font-mono text-emerald-600 dark:text-[#23a559] flex items-center gap-2">
+                        <div className="text-[13px] mt-auto font-mono text-[#23a559] flex items-center gap-2">
                             {mode === 'music' ? <Music size={16} className="opacity-80" /> : <Gamepad2 size={16} className="opacity-80" />}
                             {formatTime(elapsedTime)} elapsed
                         </div>
@@ -178,7 +170,7 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
             <div className="mt-4">
                 <button
                     onClick={() => window.open(`https://www.google.com/search?q=${mode === 'music' ? 'Chilli+Beans+Raise' : 'IT+Welcome+to+Derry'}`, "_blank")}
-                    className="w-full h-[32px] rounded bg-slate-100 dark:bg-[#383a40] text-sm text-slate-900 dark:text-[#f2f3f5] font-medium hover:bg-slate-200 dark:hover:bg-[#474a52] transition-colors truncate flex items-center justify-center hover:underline cursor-pointer"
+                    className="w-full h-[32px] rounded bg-[#383a40] text-sm text-[#f2f3f5] font-medium hover:bg-[#474a52] transition-colors truncate flex items-center justify-center hover:underline cursor-pointer"
                 >
                     Search This
                 </button>

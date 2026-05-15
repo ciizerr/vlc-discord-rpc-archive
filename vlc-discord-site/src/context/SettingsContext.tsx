@@ -14,7 +14,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [glassBlurLevel, setGlassBlurLevel] = useState(12);
 
     return (
-        <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+        <NextThemesProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
             <SettingsContext.Provider value={{ glassBlurLevel, setGlassBlurLevel }}>
                 {children}
             </SettingsContext.Provider>

@@ -6,22 +6,22 @@ export default async function RepoExplorer() {
 
     if (!sourceData) {
         return (
-            <div className="h-[200px] w-full bg-slate-50 dark:bg-[#0d1117] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500">
+            <div className="h-[200px] w-full bg-[#111113] rounded-xl border border-white/[0.06] flex items-center justify-center text-[#52525b]">
                 Source code not found.
             </div>
         );
     }
 
     return (
-        <div className="w-full bg-slate-50 dark:bg-[#0d1117] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col font-mono text-sm shadow-2xl transition-colors duration-300">
+        <div className="w-full bg-[#0d0d0f] rounded-xl border border-white/[0.06] overflow-hidden flex flex-col font-mono text-sm shadow-2xl">
             {/* Terminal Title Bar */}
-            <div className="bg-slate-200 dark:bg-[#161b22] px-4 py-2 border-b border-slate-300 dark:border-slate-800 flex items-center gap-2 transition-colors duration-300 shrink-0">
+            <div className="bg-[#111113] px-4 py-2.5 border-b border-white/[0.06] flex items-center gap-2 shrink-0">
                 <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#ff5f57]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+                    <div className="w-3 h-3 rounded-full bg-[#28c840]"></div>
                 </div>
-                <div className="ml-4 text-slate-600 dark:text-slate-500 text-xs truncate">
+                <div className="ml-4 text-[#52525b] text-xs truncate">
                     windhawk-source/{sourceData.version}/{sourceData.filename} — C++
                 </div>
             </div>

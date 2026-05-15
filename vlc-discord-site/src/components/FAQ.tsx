@@ -6,8 +6,32 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import React, { useEffect, useRef } from "react";
+
+function useReveal() {
+    const ref = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    el.classList.add("visible");
+                    observer.unobserve(el);
+                }
+            },
+            { threshold: 0.1 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+    return ref;
+}
 
 export default function FAQ() {
+    const headerRef = useReveal();
+    const contentRef = useReveal();
+
     const items = [
         {
             question: "Is this safe to use?",
@@ -47,24 +71,33 @@ export default function FAQ() {
     ];
 
     return (
-        <section id="faq" className="py-24 max-w-3xl mx-auto px-6">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+        <section id="faq" className="py-24 md:py-32 max-w-2xl mx-auto">
+            {/* Section Header */}
+            <div ref={headerRef} className="reveal mb-12">
+                <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#FF9500] mb-3">
+                    Support
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-3">
                     Frequently Asked Questions
                 </h2>
-                <p className="text-slate-500 dark:text-slate-400">
+                <p className="text-[14px] text-[#71717a]">
                     Everything you need to know about the mod.
                 </p>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-500/10 to-purple-600/10 backdrop-blur-md border border-slate-200 dark:border-white/10 rounded-2xl p-8 shadow-lg">
+            {/* Accordion */}
+            <div ref={contentRef} className="reveal" style={{ transitionDelay: "0.1s" }}>
                 <Accordion type="single" collapsible className="w-full">
                     {items.map((item) => (
-                        <AccordionItem key={item.value} value={item.value} className="border-b-slate-200 dark:border-b-slate-800 last:border-0">
-                            <AccordionTrigger className="text-left text-slate-900 dark:text-slate-100 hover:no-underline hover:text-orange-500 dark:hover:text-orange-400 transition-colors py-4">
+                        <AccordionItem
+                            key={item.value}
+                            value={item.value}
+                            className="border-b border-white/[0.06] last:border-0"
+                        >
+                            <AccordionTrigger className="text-left text-[15px] font-medium text-[#fafafa] hover:no-underline hover:text-[#FF9500] transition-colors py-5">
                                 {item.question}
                             </AccordionTrigger>
-                            <AccordionContent className="text-slate-600 dark:text-slate-400 leading-relaxed pb-4">
+                            <AccordionContent className="text-[14px] text-[#a1a1aa] leading-relaxed pb-5">
                                 {item.answer}
                             </AccordionContent>
                         </AccordionItem>
