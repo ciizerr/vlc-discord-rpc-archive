@@ -92,7 +92,7 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         {/* Grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
-        
+
         <SettingsProvider>
           {children}
         </SettingsProvider>

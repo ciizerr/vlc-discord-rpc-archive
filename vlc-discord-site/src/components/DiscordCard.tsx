@@ -107,7 +107,7 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
         : "/assets/default/vlc_icon.png";
 
     return (
-        <div className="bg-[#111214] text-white p-4 rounded-lg w-[340px] shadow-2xl border border-white/[0.06] font-sans relative overflow-hidden text-left">
+        <div className="bg-[#111214] text-white p-4 rounded-lg w-[380px] shadow-2xl border border-white/[0.06] font-sans relative overflow-hidden text-left">
 
             {/* Header */}
             <h3 className="text-[12px] font-bold text-[#b5bac1] uppercase mb-4 tracking-wide antialiased">

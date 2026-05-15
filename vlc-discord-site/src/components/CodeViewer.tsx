@@ -30,28 +30,31 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    // Premium coding font stack
+    const codingFont = "'Google Sans Code', 'JetBrains Mono', 'Roboto Mono', 'Fira Code', monospace";
+
     return (
-        <div className="relative group border border-white/[0.06] rounded-xl overflow-hidden bg-[#0d0d0f]">
+        <div className="relative group flex flex-col h-full bg-[#0d0d0f]">
             {/* Copy Button */}
             <button
                 onClick={handleCopy}
-                className="absolute top-4 right-4 z-20 p-2 bg-[#111113] border border-white/[0.06] rounded-md text-[#a1a1aa] hover:text-white hover:border-[#FF9500]/30 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                className="absolute top-4 right-6 z-30 p-2.5 bg-[#111113]/80 backdrop-blur-md border border-white/[0.08] rounded-lg text-[#a1a1aa] hover:text-white hover:border-[#FF9500]/40 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-2xl"
                 title="Copy code"
             >
                 {copied ? <Check size={16} className="text-[#FF9500]" /> : <Copy size={16} />}
             </button>
 
-            {/* Code Block */}
-            <div className={`relative overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-full' : 'max-h-[500px]'}`}>
+            {/* Code Block Container */}
+            <div className={`relative flex-1 overflow-hidden transition-all duration-700 ease-in-out ${expanded ? 'max-h-full' : 'max-h-[600px]'}`}>
                 {mounted ? (
                     <SyntaxHighlighter
                         language={language}
                         style={vscDarkPlus}
                         customStyle={{
                             margin: 0,
-                            padding: '1.5rem',
+                            padding: '2rem 1rem',
                             fontSize: '13px',
-                            lineHeight: '1.6',
+                            lineHeight: '1.7',
                             background: 'transparent',
                             textShadow: 'none',
                         }}
@@ -59,49 +62,56 @@ export default function CodeViewer({ code, language }: CodeViewerProps) {
                             style: {
                                 background: 'transparent',
                                 textShadow: 'none',
-                                fontFamily: 'var(--font-inter), monospace',
+                                fontFamily: codingFont,
+                                fontWeight: 500,
                             }
                         }}
                         showLineNumbers={true}
                         lineNumberStyle={{
-                            minWidth: '3.5em',
-                            paddingRight: '1.5em',
+                            minWidth: '4em',
+                            paddingRight: '2em',
                             color: '#3f3f46',
                             textAlign: 'right',
                             userSelect: 'none',
+                            fontFamily: codingFont,
+                            fontSize: '12px',
                         }}
                     >
                         {code}
                     </SyntaxHighlighter>
                 ) : (
                     <pre
-                        className="m-0 p-6 text-[13px] leading-relaxed overflow-auto bg-transparent font-mono text-[#52525b]"
+                        style={{ fontFamily: codingFont }}
+                        className="m-0 p-8 text-[13px] leading-relaxed overflow-auto bg-transparent text-[#52525b]"
                     >
                         {code}
                     </pre>
                 )}
 
-                {/* Gradient Overlay (only if collapsed) */}
+                {/* Ambient Glow for Code */}
+                <div className="absolute top-0 left-0 w-64 h-64 bg-[#FF9500]/[0.02] blur-[100px] pointer-events-none" />
+
+                {/* Fade-out Gradient (only if collapsed) */}
                 {!expanded && (
-                    <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0d0d0f] via-[#0d0d0f]/80 to-transparent pointer-events-none" />
+                    <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0d0d0f] via-[#0d0d0f]/90 to-transparent z-10 pointer-events-none" />
                 )}
             </div>
 
-            {/* Expand/Collapse Control */}
-            <div className="relative z-20 bg-[#111113] border-t border-white/[0.06] p-2 flex justify-center">
+            {/* Expand/Collapse Control - Floating Style */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
                 <button
                     onClick={() => setExpanded(!expanded)}
-                    className="flex items-center gap-2 px-4 py-1.5 rounded-md bg-white/[0.04] text-[#a1a1aa] text-xs font-semibold hover:bg-white/[0.08] hover:text-white transition-all border border-white/[0.06] hover:border-white/[0.1]"
+                    className="flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-[#111113] border border-white/[0.08] text-[#a1a1aa] text-[13px] font-bold hover:bg-[#18181b] hover:text-white hover:border-[#FF9500]/40 transition-all shadow-[0_12px_24px_rgba(0,0,0,0.4)] hover:shadow-[#FF9500]/5 group/btn"
                 >
                     {expanded ? (
                         <>
-                            <ChevronUp size={14} />
-                            Collapse
+                            <ChevronUp size={16} className="group-hover/btn:-translate-y-0.5 transition-transform" />
+                            Collapse Source
                         </>
                     ) : (
                         <>
-                            <ChevronDown size={14} />
-                            Read full source
+                            <ChevronDown size={16} className="group-hover/btn:translate-y-0.5 transition-transform" />
+                            Explore Full Source
                         </>
                     )}
                 </button>

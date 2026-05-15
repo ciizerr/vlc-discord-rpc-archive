@@ -1,64 +1,68 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { Zap, Shield, RefreshCw, Tv, Search, FileText } from "lucide-react";
+import { RefreshCw, Tv, Search, Cpu, Lock, Layout } from "lucide-react";
 
 interface Feature {
     icon: React.ReactNode;
     title: string;
     description: string;
     label: string;
+    span?: string;
+    gradient?: string;
 }
 
-const primaryFeatures: Feature[] = [
+const bentoFeatures: Feature[] = [
     {
-        icon: <Zap size={24} />,
-        title: "Zero Bloat",
-        description: "Injects directly into the VLC process. No background Node.js processes, system tray icons, or separate RAM-hungry apps. Native performance where it belongs.",
+        icon: <Cpu size={32} strokeWidth={1.5} />,
+        title: "Native Architecture",
+        description: "Built as a pure C++ Windhawk mod. By injecting directly into the VLC process, we eliminate the need for background Node.js scripts or separate applications. Zero system tray clutter, zero overhead.",
         label: "Performance",
+        span: "md:col-span-2 md:row-span-2",
+        gradient: "from-[#FF9500]/10 via-transparent to-transparent",
     },
     {
-        icon: <FileText size={24} />,
-        title: "Smart Title Cleaning",
-        description: "Automatically strips scene release tags (WEB-DL, x265) and piracy site URLs from filenames. Your media titles look clean, professional, and accurate.",
+        icon: <Layout size={24} strokeWidth={2} />,
+        title: "Title Alchemy",
+        description: "Automatically strips scene tags (WEB-DL, x265) and piracy URLs. Your status stays clean and professional.",
         label: "Aesthetics",
+        span: "md:col-span-1 md:row-span-1",
     },
     {
-        icon: <Shield size={24} />,
-        title: "Local & Private",
-        description: "Runs 100% on your machine. Your playback data and local file paths never leave your PC. Optional community filters are fetched locally every 6 hours.",
+        icon: <Lock size={24} strokeWidth={2} />,
+        title: "Privacy First",
+        description: "100% local. Your playback data and file paths never leave your machine.",
         label: "Privacy",
+        span: "md:col-span-1 md:row-span-1",
     },
-];
-
-const secondaryFeatures: Feature[] = [
     {
-        icon: <Tv size={20} />,
+        icon: <Tv size={24} strokeWidth={2} />,
         title: "Deep Metadata",
-        description: "TV shows display Season, Episode, and Chapter. Music shows Artist/Album. Even active audio language and quality badges (4K/HDR).",
+        description: "TV shows show Season/Episode. Music shows Artist/Album. Includes active audio language and quality badges.",
         label: "Information",
+        span: "md:col-span-1 md:row-span-1",
     },
     {
-        icon: <Search size={20} />,
-        title: "Interactive Search",
-        description: "Adds a configurable 'Search This' button to your Discord status. Link it to Google, IMDb, YouTube, or your own custom provider.",
-        label: "Interaction",
-    },
-    {
-        icon: <RefreshCw size={20} />,
+        icon: <RefreshCw size={24} strokeWidth={2} />,
         title: "Smart Cover Art",
-        description: "Automatically uploads local album art or falls back to Bing Image Search for high-quality movie posters and anime art.",
+        description: "Automatic local art uploads with Bing fallback for posters.",
         label: "Visuals",
+        span: "md:col-span-1 md:row-span-1",
+    },
+    {
+        icon: <Search size={24} strokeWidth={2} />,
+        title: "Interactive Search",
+        description: "Configurable search button for Google, IMDb, or YouTube.",
+        label: "Interaction",
+        span: "md:col-span-1 md:row-span-1",
     },
 ];
 
 function useReveal() {
     const ref = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
-
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
@@ -66,76 +70,82 @@ function useReveal() {
                     observer.unobserve(el);
                 }
             },
-            { threshold: 0.15 }
+            { threshold: 0.1 }
         );
-
         observer.observe(el);
         return () => observer.disconnect();
     }, []);
-
     return ref;
 }
 
-function PrimaryFeatureCard({ feature, index }: { feature: Feature; index: number }) {
+function BentoCard({ feature, index }: { feature: Feature; index: number }) {
     const ref = useReveal();
+    const isLarge = feature.span?.includes("row-span-2");
 
     return (
-        <div
+        <article
             ref={ref}
-            className="reveal group relative bg-[#111113] border border-white/[0.06] rounded-xl p-8 card-hover"
+            className={`reveal group relative bg-[#0d0d0f] border border-white/[0.05] rounded-2xl p-8 overflow-hidden transition-all duration-500 hover:border-[#FF9500]/20 hover:shadow-[0_0_40px_rgba(255,149,0,0.03)] ${feature.span}`}
             style={{ transitionDelay: `${index * 0.1}s` }}
+            itemScope
+            itemType="https://schema.org/Feature"
+            role="listitem"
         >
-            {/* Subtle glow on hover */}
-            <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-[#FF9500]/[0.03] to-transparent" />
+            {/* Background Gradient */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient || "from-white/[0.01] to-transparent"} opacity-50`} />
 
-            <div className="relative z-10">
-                {/* Label */}
-                <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#FF9500] mb-4">
-                    {feature.label}
-                </span>
+            {/* Animated Glow on Hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[radial-gradient(circle_at_var(--x)_var(--y),rgba(255,149,0,0.05)_0%,transparent_70%)] pointer-events-none"
+                style={{
+                    '--x': '50%',
+                    '--y': '50%'
+                } as React.CSSProperties}
+            />
 
-                {/* Icon + Title row */}
-                <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#FF9500]/10 text-[#FF9500]">
+            <div className="relative z-10 h-full flex flex-col">
+                <div className="mb-6">
+                    <div
+                        className={`flex items-center justify-center rounded-xl bg-white/[0.03] text-[#FF9500] border border-white/[0.05] shadow-inner transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 ${isLarge ? 'w-14 h-14' : 'w-11 h-11'}`}
+                        aria-hidden="true"
+                    >
                         {feature.icon}
                     </div>
-                    <h3 className="text-xl font-bold text-white tracking-tight">
+                </div>
+
+                <div>
+                    <span
+                        className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] text-[#3f3f46] mb-2 group-hover:text-[#FF9500] transition-colors"
+                        itemProp="category"
+                    >
+                        {feature.label}
+                    </span>
+                    <h3
+                        className={`${isLarge ? 'text-2xl md:text-3xl' : 'text-lg'} font-bold text-white mb-3 tracking-tight`}
+                        itemProp="name"
+                    >
                         {feature.title}
                     </h3>
-                </div>
-
-                {/* Description */}
-                <p className="text-[14px] leading-relaxed text-[#a1a1aa] max-w-md">
-                    {feature.description}
-                </p>
-            </div>
-        </div>
-    );
-}
-
-function SecondaryFeatureCard({ feature, index }: { feature: Feature; index: number }) {
-    const ref = useReveal();
-
-    return (
-        <div
-            ref={ref}
-            className="reveal group relative bg-[#111113]/50 border border-white/[0.04] rounded-lg p-6 card-hover"
-            style={{ transitionDelay: `${0.3 + index * 0.1}s` }}
-        >
-            <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/[0.04] text-[#a1a1aa] group-hover:text-[#FF9500] transition-colors shrink-0 mt-0.5">
-                    {feature.icon}
-                </div>
-                <div>
-                    <h4 className="text-[14px] font-semibold text-white mb-1">
-                        {feature.title}
-                    </h4>
-                    <p className="text-[13px] leading-relaxed text-[#71717a]">
+                    <p
+                        className={`${isLarge ? 'text-[15px] md:text-[16px]' : 'text-[13px]'} leading-relaxed text-[#71717a] group-hover:text-[#a1a1aa] transition-colors`}
+                        itemProp="description"
+                    >
                         {feature.description}
                     </p>
                 </div>
+
+                {isLarge && (
+                    <div className="mt-auto pt-10" aria-hidden="true">
+                        {/* Optional visual element for the large card */}
+                        <div className="w-full h-px bg-gradient-to-right from-[#FF9500]/20 to-transparent mb-6" />
+                        <div className="flex gap-4">
+                            <div className="h-1.5 w-1.5 rounded-full bg-[#FF9500]" />
+                            <div className="h-1.5 w-8 rounded-full bg-[#FF9500]/20" />
+                            <div className="h-1.5 w-4 rounded-full bg-[#FF9500]/10" />
+                        </div>
+                    </div>
+                )}
             </div>
-        </div>
+        </article>
     );
 }
 
@@ -143,38 +153,27 @@ export default function FeatureSection() {
     const headerRef = useReveal();
 
     return (
-        <section id="features" className="py-24 md:py-32">
+        <section id="features" className="py-24 md:py-32" aria-labelledby="features-title">
             {/* Section Header */}
-            <div ref={headerRef} className="reveal mb-16">
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                    <div>
-                        <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#FF9500] mb-3">
-                            Why VLC RPC
-                        </span>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-                            Engineered, not hacked together
-                        </h2>
-                    </div>
-                    <p className="text-[14px] text-[#71717a] max-w-sm md:text-right">
-                        Built as a native Windhawk mod — no external processes, no wasted resources, no compromises.
-                    </p>
-                </div>
-            </div>
+            <header ref={headerRef} className="reveal mb-16 text-center md:text-left">
+                <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FF9500] mb-4">
+                    Features
+                </span>
+                <h2 id="features-title" className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-6 max-w-2xl">
+                    Built for <span className="text-[#FF9500]">Performance</span>
+                </h2>
+                <p className="text-[15px] text-[#71717a] max-w-xl leading-relaxed">
+                    Unlike other RPC solutions that require separate background apps, our native Windhawk mod lives directly inside VLC. It only runs when VLC runs, consumes zero resources when you&apos;re not watching, and requires no manual startup. It just works.
+                </p>
+            </header>
 
-            {/* Primary Features — Large Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {primaryFeatures.map((feature, i) => (
-                    <PrimaryFeatureCard key={feature.title} feature={feature} index={i} />
-                ))}
-            </div>
-
-            {/* Divider */}
-            <div className="section-divider my-8" />
-
-            {/* Secondary Features — Compact Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {secondaryFeatures.map((feature, i) => (
-                    <SecondaryFeatureCard key={feature.title} feature={feature} index={i} />
+            <div
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 h-auto grid-flow-dense"
+                role="list"
+                aria-label="VLC Discord RPC features"
+            >
+                {bentoFeatures.map((feature, i) => (
+                    <BentoCard key={feature.title} feature={feature} index={i} />
                 ))}
             </div>
         </section>

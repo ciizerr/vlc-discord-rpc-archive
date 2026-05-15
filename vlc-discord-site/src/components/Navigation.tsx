@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
@@ -18,15 +18,6 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Close menu on route change / resize
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth >= 768) setIsMenuOpen(false);
-        };
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
     const navLinks = [
         { label: "Features", href: "#features" },
         { label: "Install", href: "#installation" },
@@ -35,132 +26,140 @@ export default function Navbar() {
     ];
 
     return (
-        <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                scrolled
-                    ? "bg-[#09090b]/80 backdrop-blur-xl border-b border-white/[0.06]"
-                    : "bg-transparent border-b border-transparent"
-            }`}
-        >
-            <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <header className="fixed top-0 left-0 right-0 z-[100] px-6 py-6 pointer-events-none">
+            <nav
+                className={`max-w-5xl mx-auto flex items-center justify-between transition-all duration-500 ease-out pointer-events-auto
+                    ${scrolled 
+                        ? "bg-[#09090b]/70 backdrop-blur-xl border border-white/[0.08] px-4 md:px-6 py-2.5 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)]" 
+                        : "bg-transparent border border-transparent px-0 py-2 rounded-none"
+                    }`}
+            >
                 {/* Left: Logo */}
-                <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-                    <Image
-                        src="/assets/vlc-discord-icon.png"
-                        alt="VLC RPC"
-                        width={28}
-                        height={28}
-                        className="object-contain"
-                    />
-                    <span className="font-semibold text-[15px] tracking-tight text-white">
+                <Link href="/" className="flex items-center gap-3 shrink-0 group">
+                    <div className="relative">
+                        <motion.div 
+                            whileHover={{ rotate: 15, scale: 1.1 }}
+                            className="relative z-10"
+                        >
+                            <Image
+                                src="/assets/vlc-discord-icon.png"
+                                alt="VLC RPC"
+                                width={32}
+                                height={32}
+                                className="object-contain filter drop-shadow-[0_4px_10px_rgba(255,149,0,0.3)]"
+                            />
+                        </motion.div>
+                        <div className="absolute inset-0 bg-[#FF9500]/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <span className="font-bold text-[16px] tracking-tight text-white group-hover:text-[#FF9500] transition-colors">
                         VLC RPC
                     </span>
                 </Link>
 
-                {/* Center: Nav Links (Desktop) */}
-                <div className="hidden md:flex items-center gap-8">
+                {/* Center: Navigation Links (Desktop) */}
+                <div className="hidden md:flex items-center gap-1">
                     {navLinks.map((link) => (
                         <Link
                             key={link.label}
                             href={link.href}
-                            className="nav-link text-[13px] font-medium text-[#a1a1aa] hover:text-white"
+                            className="relative px-4 py-2 text-[13px] font-semibold text-[#a1a1aa] hover:text-white transition-all duration-300 group/link"
                         >
                             {link.label}
+                            <span className="absolute bottom-1 left-4 right-4 h-[2px] bg-[#FF9500] scale-x-0 group-hover/link:scale-x-100 transition-transform origin-center" />
                         </Link>
                     ))}
+                    <Link
+                        href="/archive"
+                        className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-[#52525b] hover:text-[#a1a1aa] transition-colors group/archive"
+                    >
+                        Archive
+                        <ExternalLink size={12} className="opacity-40 group-hover/archive:opacity-100" />
+                    </Link>
                 </div>
 
-                {/* Right: CTA + Mobile Menu */}
+                {/* Right: CTA */}
                 <div className="flex items-center gap-3">
                     <Link
                         href="https://windhawk.net/mods/vlc-discord-rpc"
-                        className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#FF9500] hover:bg-[#e68600] text-[#09090b] text-[13px] font-semibold rounded-md transition-all duration-200 hover:shadow-[0_0_20px_rgba(255,149,0,0.3)]"
+                        className={`hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300
+                            ${scrolled 
+                                ? "bg-[#FF9500] text-[#09090b] hover:shadow-[0_0_20px_rgba(255,149,0,0.4)]" 
+                                : "bg-white/[0.05] border border-white/[0.1] text-white hover:bg-[#FF9500] hover:text-[#09090b] hover:border-transparent"
+                            }`}
                     >
-                        Get the Mod
+                        Get Mod
                         <ArrowRight size={14} strokeWidth={2.5} />
                     </Link>
 
-                    {/* Mobile hamburger */}
+                    {/* Mobile Menu Toggle */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-2 text-[#a1a1aa] hover:text-white transition-colors"
-                        aria-label="Toggle menu"
+                        className={`md:hidden p-2.5 rounded-xl transition-all duration-300 
+                            ${scrolled ? "bg-white/[0.05] text-white" : "text-[#a1a1aa] hover:text-white"}`}
                     >
-                        {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                        {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
                 </div>
-            </div>
+            </nav>
 
-            {/* Mobile Menu — Slide-in Sheet */}
+            {/* Mobile Navigation Sheet */}
             <AnimatePresence>
                 {isMenuOpen && (
                     <>
-                        {/* Backdrop */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
                             onClick={() => setIsMenuOpen(false)}
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110] pointer-events-auto"
                         />
-
-                        {/* Sheet */}
                         <motion.div
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
-                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                            className="fixed top-0 right-0 bottom-0 w-72 bg-[#111113] border-l border-white/[0.06] z-50 flex flex-col"
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="fixed top-0 right-0 bottom-0 w-[300px] bg-[#0d0d0f] border-l border-white/[0.08] z-[120] pointer-events-auto flex flex-col p-8"
                         >
-                            {/* Sheet Header */}
-                            <div className="flex items-center justify-between px-6 h-16 border-b border-white/[0.06]">
-                                <span className="font-semibold text-[15px] text-white">Menu</span>
-                                <button
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className="p-2 text-[#a1a1aa] hover:text-white transition-colors"
-                                >
-                                    <X size={20} />
+                            <div className="flex items-center justify-between mb-12">
+                                <span className="font-bold text-white text-lg tracking-tight">Navigation</span>
+                                <button onClick={() => setIsMenuOpen(false)} className="p-2 text-[#52525b] hover:text-white">
+                                    <X size={24} />
                                 </button>
                             </div>
 
-                            {/* Sheet Links */}
-                            <div className="flex flex-col px-6 py-6 gap-1">
+                            <div className="flex flex-col gap-2">
                                 {navLinks.map((link, i) => (
-                                    <Link
+                                    <motion.div
                                         key={link.label}
-                                        href={link.href}
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className="text-[15px] font-medium text-[#a1a1aa] hover:text-white py-3 border-b border-white/[0.04] transition-colors"
-                                        style={{ animationDelay: `${i * 0.05}s` }}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.1 }}
                                     >
-                                        {link.label}
-                                    </Link>
+                                        <Link
+                                            href={link.href}
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="block text-2xl font-bold text-[#a1a1aa] hover:text-[#FF9500] py-4 transition-colors border-b border-white/[0.03]"
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    </motion.div>
                                 ))}
-                                <Link
-                                    href="/archive"
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className="text-[15px] font-medium text-[#a1a1aa] hover:text-white py-3 border-b border-white/[0.04] transition-colors"
-                                >
-                                    Archive
-                                </Link>
                             </div>
 
-                            {/* Sheet CTA */}
-                            <div className="mt-auto px-6 pb-8">
+                            <div className="mt-auto">
                                 <Link
                                     href="https://windhawk.net/mods/vlc-discord-rpc"
-                                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#FF9500] hover:bg-[#e68600] text-[#09090b] text-[14px] font-semibold rounded-md transition-all"
+                                    className="flex items-center justify-center gap-3 w-full py-4 bg-[#FF9500] text-[#09090b] font-bold rounded-2xl shadow-xl shadow-[#FF9500]/10"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    Get the Mod
-                                    <ArrowRight size={16} />
+                                    Install via Windhawk
+                                    <ArrowRight size={18} />
                                 </Link>
                             </div>
                         </motion.div>
                     </>
                 )}
             </AnimatePresence>
-        </nav>
+        </header>
     );
 }
