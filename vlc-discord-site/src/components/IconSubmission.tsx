@@ -45,7 +45,7 @@ export default function IconSubmission() {
                         Got an Icon Idea?
                     </h3>
                     <p className="text-[14px] text-[#a1a1aa] max-w-md">
-                        We&apos;re accepting icon submissions for upcoming themes. Help expand the collection with your creative designs.
+                        Help us expand the theme collection! Submit a set of four icons (vlc, play, pause, stop) to `ciizerr` on Discord or via GitHub.
                     </p>
                 </div>
 

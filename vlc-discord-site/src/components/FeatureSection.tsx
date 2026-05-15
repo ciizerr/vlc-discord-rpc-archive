@@ -14,41 +14,41 @@ const primaryFeatures: Feature[] = [
     {
         icon: <Zap size={24} />,
         title: "Zero Bloat",
-        description: "Injects directly into the VLC process via Windhawk. No background Node.js scripts eating your RAM. No separate apps running. Just native code, running where it should.",
+        description: "Injects directly into the VLC process. No background Node.js processes, system tray icons, or separate RAM-hungry apps. Native performance where it belongs.",
         label: "Performance",
     },
     {
-        icon: <Shield size={24} />,
-        title: "Local Logic",
-        description: "Runs 100% locally. Your playback data never leaves your machine. No external APIs, no telemetry, no cloud. Everything stays on your PC.",
-        label: "Privacy",
+        icon: <FileText size={24} />,
+        title: "Smart Title Cleaning",
+        description: "Automatically strips scene release tags (WEB-DL, x265) and piracy site URLs from filenames. Your media titles look clean, professional, and accurate.",
+        label: "Aesthetics",
     },
     {
-        icon: <RefreshCw size={24} />,
-        title: "Auto-State Detection",
-        description: "Automatically switches between Playing, Paused, and Stopped states using VLC's internal events. Instant response, zero polling overhead.",
-        label: "Automation",
+        icon: <Shield size={24} />,
+        title: "Local & Private",
+        description: "Runs 100% on your machine. Your playback data and local file paths never leave your PC. Optional community filters are fetched locally every 6 hours.",
+        label: "Privacy",
     },
 ];
 
 const secondaryFeatures: Feature[] = [
     {
         icon: <Tv size={20} />,
-        title: "Smart Recognition",
-        description: "Auto-detects SxxExx format for TV shows with season and episode info.",
-        label: "Intelligence",
+        title: "Deep Metadata",
+        description: "TV shows display Season, Episode, and Chapter. Music shows Artist/Album. Even active audio language and quality badges (4K/HDR).",
+        label: "Information",
     },
     {
         icon: <Search size={20} />,
-        title: "Instant Search",
-        description: "Configurable 'Search This' button — redirect to Google, IMDb, or YouTube.",
-        label: "Interactive",
+        title: "Interactive Search",
+        description: "Adds a configurable 'Search This' button to your Discord status. Link it to Google, IMDb, YouTube, or your own custom provider.",
+        label: "Interaction",
     },
     {
-        icon: <FileText size={20} />,
-        title: "Rich Details",
-        description: "Displays resolution (4K/HDR), audio language, and advanced metadata.",
-        label: "Metadata",
+        icon: <RefreshCw size={20} />,
+        title: "Smart Cover Art",
+        description: "Automatically uploads local album art or falls back to Bing Image Search for high-quality movie posters and anime art.",
+        label: "Visuals",
     },
 ];
 

@@ -50,7 +50,7 @@ export default function FAQ() {
         },
         {
             question: "It's not working, what do I do?",
-            answer: "First, ensure Discord is installed and running with 'Display Activity' enabled (User Settings > Activity Privacy). If the issue persists, try restarting VLC, Discord, or your PC. If it still doesn't work, check the Windhawk logs and open an issue on GitHub.",
+            answer: "Check the Windhawk mod logs first to identify the issue. Common fixes include: 1. Ensure VLC's Web Interface is enabled with password '1234'. 2. Verify Discord's 'Activity Status' is ON. 3. If you see '401 Unauthorized' in logs, your VLC password is wrong. 4. If connection fails, manually set 'http-port=8080' in your %APPDATA%\\vlc\\vlcrc file.",
             value: "item-4"
         },
         {
