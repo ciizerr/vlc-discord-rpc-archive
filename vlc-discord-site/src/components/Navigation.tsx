@@ -144,6 +144,19 @@ export default function Navbar() {
                                         </Link>
                                     </motion.div>
                                 ))}
+                                <motion.div
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: navLinks.length * 0.1 }}
+                                >
+                                    <Link
+                                        href="/archive"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="block text-2xl font-bold text-[#52525b] hover:text-[#a1a1aa] py-4 transition-colors border-b border-white/[0.03]"
+                                    >
+                                        Archive
+                                    </Link>
+                                </motion.div>
                             </div>
 
                             <div className="mt-auto">
