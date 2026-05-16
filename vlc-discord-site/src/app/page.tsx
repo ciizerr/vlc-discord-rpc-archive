@@ -2,6 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import RepoExplorer from "@/components/RepoExplorer";
 import Navbar from "@/components/Navigation";
 import FeatureSection from "@/components/FeatureSection";
+import SettingsShowcase from "@/components/SettingsShowcase";
 import ChangelogViewer from "@/components/ChangelogViewer";
 import InstallationGuide from "@/components/InstallationGuide";
 import FAQ from "@/components/FAQ";
@@ -56,6 +57,12 @@ export default async function Home() {
 
         {/* Features */}
         <FeatureSection />
+
+        {/* Divider */}
+        <div className="section-divider" />
+
+        {/* Interactive Showcase */}
+        <SettingsShowcase />
 
         {/* Divider */}
         <div className="section-divider" />

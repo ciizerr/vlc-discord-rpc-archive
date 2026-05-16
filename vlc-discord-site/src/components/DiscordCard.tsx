@@ -9,8 +9,18 @@ type Mode = 'video' | 'music';
 
 const STATES: PlaybackState[] = ['playing', 'paused', 'stopped'];
 
+export interface ModSettings {
+    showCoverArt: boolean;
+    showQualityTags: boolean;
+    minimalMode: boolean;
+    buttonLabel: string;
+    theme: "" | "dark_";
+    musicLabel: "Title" | "Artist" | "Album";
+}
+
 interface DiscordCardProps {
     mode: Mode;
+    settings?: ModSettings;
 }
 
 // Music mode data
@@ -29,8 +39,19 @@ const videoData = {
     duration: 61 * 60 + 3 // 01:01:03
 };
 
-export default function DiscordCard({ mode }: DiscordCardProps) {
+export default function DiscordCard({ mode, settings }: DiscordCardProps) {
     const [status, setStatus] = useState<PlaybackState>('playing');
+
+    const defaultSettings: ModSettings = {
+        showCoverArt: true,
+        showQualityTags: true,
+        minimalMode: false,
+        buttonLabel: "Search This",
+        theme: "",
+        musicLabel: "Title"
+    };
+
+    const s = settings || defaultSettings;
 
     const [elapsedTime, setElapsedTime] = useState(
         mode === 'music' ? musicData.timestamp : 21 * 60 + 28
@@ -69,12 +90,16 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
         return `${parseInt(m)}:${s}`;
     };
 
+    const themePrefix = s.theme;
+    const folder = themePrefix === "dark_" ? "dark_" : "default";
+    const vlcIcon = `/assets/${folder}/${themePrefix}vlc_icon.png`;
+
     const getStatusIcon = () => {
         switch (status) {
-            case 'playing': return '/assets/default/play_icon.png';
-            case 'paused': return '/assets/default/pause_icon.png';
-            case 'stopped': return '/assets/default/stop_icon.png';
-            default: return '/assets/default/vlc_icon.png';
+            case 'playing': return `/assets/${folder}/${themePrefix}play_icon.png`;
+            case 'paused': return `/assets/${folder}/${themePrefix}pause_icon.png`;
+            case 'stopped': return `/assets/${folder}/${themePrefix}stop_icon.png`;
+            default: return vlcIcon;
         }
     };
 
@@ -85,7 +110,9 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
 
     const headerText = isStopped
         ? 'Playing'
-        : (mode === 'music' ? `Listening to ${musicData.track}` : `Watching ${videoData.title}`);
+        : (mode === 'music' 
+            ? (s.musicLabel === "Title" ? `Listening to ${musicData.track}` : s.musicLabel === "Artist" ? `Listening to ${musicData.artist}` : `Listening to ${musicData.album}`)
+            : `Watching ${videoData.title}`);
 
     let title, subtitle, subDetailText;
 
@@ -94,7 +121,8 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
         subtitle = isStopped ? 'Idling' : `by ${musicData.artist} ${!isStopped ? `(${status === 'playing' ? 'Playing' : 'Paused'})` : ''}`;
         subDetailText = isStopped ? 'Waiting for media...' : musicData.album;
     } else {
-        title = isStopped ? 'VLC Media Player' : `${videoData.title} • 4K • HDR`;
+        const tags = s.showQualityTags ? ' • 4K • HDR' : '';
+        title = isStopped ? 'VLC Media Player' : `${videoData.title}${tags}`;
         subtitle = isStopped ? 'Idling' : videoData.details;
         const stateText = isStopped ? 'Waiting for media...' : `(${status === 'playing' ? 'Playing' : 'Paused'})`;
         const detailText = isStopped ? subtitle : `${subtitle} ${stateText}`;
@@ -102,9 +130,11 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
         subDetailText = isStopped ? 'Waiting for media...' : null;
     }
 
-    const imageSrc = mode === 'music'
-        ? (isStopped ? "/assets/default/vlc_icon.png" : "/assets/default/album_art.png")
-        : "/assets/default/vlc_icon.png";
+    const imageSrc = s.showCoverArt 
+        ? (mode === 'music'
+            ? (isStopped ? vlcIcon : "/album_art.png")
+            : (isStopped ? vlcIcon : "/album_art_movie.webp"))
+        : vlcIcon;
 
     return (
         <div className="bg-[#111214] text-white p-4 rounded-lg w-[380px] shadow-2xl border border-white/[0.06] font-sans relative overflow-hidden text-left">
@@ -121,9 +151,11 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
                         <Image src={imageSrc} width={80} height={80} alt="Media" className="object-cover" />
                     </div>
                     {/* Small Image (Circle Status) */}
-                    <div className="absolute -bottom-1 -right-1 w-[28px] h-[28px] rounded-full bg-[#111214] border-[4px] border-[#111214] flex items-center justify-center overflow-hidden">
-                        <Image src={getStatusIcon()} width={28} height={28} alt="Status" className="rounded-full bg-transparent" />
-                    </div>
+                    {!s.minimalMode && (
+                        <div className="absolute -bottom-1 -right-1 w-[28px] h-[28px] rounded-full bg-[#111214] border-[4px] border-[#111214] flex items-center justify-center overflow-hidden">
+                            <Image src={getStatusIcon()} width={28} height={28} alt="Status" className="rounded-full bg-transparent" />
+                        </div>
+                    )}
                 </div>
 
                 {/* Text Content */}
@@ -172,7 +204,7 @@ export default function DiscordCard({ mode }: DiscordCardProps) {
                     onClick={() => window.open(`https://www.google.com/search?q=${mode === 'music' ? 'Chilli+Beans+Raise' : 'IT+Welcome+to+Derry'}`, "_blank")}
                     className="w-full h-[32px] rounded bg-[#383a40] text-sm text-[#f2f3f5] font-medium hover:bg-[#474a52] transition-colors truncate flex items-center justify-center hover:underline cursor-pointer"
                 >
-                    Search This
+                    {s.buttonLabel}
                 </button>
             </div>
         </div>

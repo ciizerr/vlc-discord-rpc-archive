@@ -20,6 +20,7 @@ export default function Navbar() {
 
     const navLinks = [
         { label: "Features", href: "#features" },
+        { label: "Try it", href: "#try-it" },
         { label: "Install", href: "#installation" },
         { label: "Changelog", href: "#changelog" },
         { label: "FAQ", href: "#faq" },
