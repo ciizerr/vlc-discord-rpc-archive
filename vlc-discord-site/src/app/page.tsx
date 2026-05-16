@@ -30,7 +30,7 @@ export default async function Home() {
 
           <LogoLoop
             logos={[
-              { src: "/vlc_logo.png", alt: "VLC Media Player" },
+              { src: "/assets/vlc_media_player.png", alt: "VLC Media Player" },
               { src: "/assets/discord.svg", alt: "Discord" },
               { src: "/assets/windhawk.svg", alt: "Windhawk" },
               { src: "/assets/Windows.svg", alt: "Windows" },
