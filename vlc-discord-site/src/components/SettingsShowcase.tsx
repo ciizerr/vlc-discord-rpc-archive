@@ -164,7 +164,7 @@ export default function SettingsShowcase() {
                                         <Palette size={14} /> Icon Theme
                                     </label>
                                     <div className="grid grid-cols-2 gap-2">
-                                        {['', 'dark_'].map((t) => (
+                                        {(['', 'dark_'] as const).map((t) => (
                                             <button
                                                 key={t}
                                                 onClick={() => updateSetting('theme', t)}
@@ -199,7 +199,7 @@ export default function SettingsShowcase() {
                                             <Type size={14} /> Activity Name
                                         </label>
                                         <div className="flex gap-2">
-                                            {['Title', 'Artist', 'Album'].map((opt) => (
+                                            {(['Title', 'Artist', 'Album'] as const).map((opt) => (
                                                 <button
                                                     key={opt}
                                                     onClick={() => updateSetting('musicLabel', opt)}
