@@ -33,13 +33,18 @@ Shows what you're watching or listening to on your Discord profile — including
 | 🎨 **Themes** | Choose between a classic Default or sleek Dark icon set. |
 | 📉 **Minimal Mode** | Hides the small play/pause badge so your cover art takes center stage. |
 
+## New Look in v1.2.0
+
+| Movies | TV Series |
+| :---: | :---: |
+| ![movies](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/movies.png) | ![series](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/series.png) |
+
 ## Icon Themes
 
-- **Default** — The classic orange VLC cone.
-![default theme](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/default.gif)
+| Default (Orange VLC Cone) | Dark (Low-light setups) |
+| :---: | :---: |
+| ![default theme](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/default.gif) | ![dark theme](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/dark_.gif) |
 
-- **Dark** — A dark variant for low-light setups.
-![dark theme](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/dark_.gif)
 
 Community icon submissions are welcome — reach out to `ciizerr` on Discord with a set of four icons (vlc, play, pause, stop).
 
