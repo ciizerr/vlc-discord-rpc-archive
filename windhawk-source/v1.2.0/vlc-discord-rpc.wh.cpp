@@ -360,6 +360,14 @@ std::wstring StrToWStr(const std::string& str) {
     return wstr;
 }
 
+std::string GetStringSettingSafe(PCWSTR name) {
+    PCWSTR val = Wh_GetStringSetting(name);
+    if (!val) return "";
+    std::wstring wval(val);
+    Wh_FreeStringSetting(val);
+    return WStrToStr(wval);
+}
+
 void ReadVlcConfig(int& port, std::wstring& authBase64) {
     port = 0;
     std::string password = "";
@@ -767,7 +775,17 @@ std::string FetchHttps(const std::wstring& host, const std::wstring& path) {
                 } while (dwSize > 0);
             } else {
                 DWORD err = GetLastError();
-                Wh_Log(L"FetchHttps failed for %s%s (WinHttp error: %lu)", host.c_str(), path.c_str(), err);
+                std::wstring cleanPath = path;
+                size_t apiKeyPos = cleanPath.find(L"api_key=");
+                if (apiKeyPos != std::wstring::npos) {
+                    size_t ampPos = cleanPath.find(L"&", apiKeyPos);
+                    if (ampPos == std::wstring::npos) {
+                        cleanPath.replace(apiKeyPos + 8, std::wstring::npos, L"***");
+                    } else {
+                        cleanPath.replace(apiKeyPos + 8, ampPos - (apiKeyPos + 8), L"***");
+                    }
+                }
+                Wh_Log(L"FetchHttps failed for %s%s (WinHttp error: %lu)", host.c_str(), cleanPath.c_str(), err);
             }
             WinHttpCloseHandle(hRequest);
         }
@@ -1817,22 +1835,19 @@ void ShowSystemToast(const std::wstring& title, const std::wstring& message, con
 
 void Worker() {
     bool bStrictLocalMode = Wh_GetIntSetting(L"FilterGroup.StrictLocalMode");
-    if (!bStrictLocalMode && Wh_GetIntSetting(L"StrictLocalMode")) bStrictLocalMode = true;
-    
     FetchRemoteFilters(bStrictLocalMode);
+    
     std::string defaultId = "1465711556418474148"; 
-    std::string myClientId = WStrToStr(WindhawkUtils::StringSetting(L"AdvancedGroup.ClientId").get());
+    std::string myClientId = GetStringSettingSafe(L"AdvancedGroup.ClientId");
     if (myClientId.empty()) myClientId = defaultId;
     
     PruneMetadataDiskCache();
 
-    bool bStrictLocalMode = Wh_GetIntSetting(L"FilterGroup.StrictLocalMode");
-    FetchRemoteFilters(bStrictLocalMode);
-    
     bool bShowCoverArt = Wh_GetIntSetting(L"DisplayGroup.ShowCoverArt");
     bool bShowChapter = Wh_GetIntSetting(L"DisplayGroup.ShowChapter");
     bool bShowQualityTags = Wh_GetIntSetting(L"DisplayGroup.ShowQualityTags");
     bool bShowAudioLanguage = Wh_GetIntSetting(L"DisplayGroup.ShowAudioLanguage");
+    bool bEnableMetadataCleaner = Wh_GetIntSetting(L"FilterGroup.EnableMetadataCleaner");
     
     bool bEnableTmdbScraper = Wh_GetIntSetting(L"ScraperGroup.EnableTmdbScraper");
     bool bEnableTvMazeScraper = Wh_GetIntSetting(L"ScraperGroup.EnableTvMazeScraper");
@@ -1841,13 +1856,13 @@ void Worker() {
     bool bShowRuntime = Wh_GetIntSetting(L"ScraperGroup.ShowRuntime");
     bool bShowMediaType = Wh_GetIntSetting(L"ScraperGroup.ShowMediaType");
 
-    std::string customTmdbKey = WStrToStr(WindhawkUtils::StringSetting(L"ScraperGroup.CustomTmdbApiKey").get());
+    std::string customTmdbKey = GetStringSettingSafe(L"ScraperGroup.CustomTmdbApiKey");
     std::string activeTmdbKey = GetActiveTmdbApiKey(customTmdbKey);
     
     bool bMinimalMode = Wh_GetIntSetting(L"DisplayGroup.MinimalMode");
     bool bShowNotifications = Wh_GetIntSetting(L"DisplayGroup.ShowNotifications");
 
-    std::string customJunkStr = WStrToStr(WindhawkUtils::StringSetting(L"FilterGroup.CustomJunkWords").get());
+    std::string customJunkStr = GetStringSettingSafe(L"FilterGroup.CustomJunkWords");
     
     std::vector<std::string> customJunkList;
     std::stringstream ss(customJunkStr);
@@ -1861,22 +1876,22 @@ void Worker() {
         }
     }
 
-    std::string myTheme = WStrToStr(WindhawkUtils::StringSetting(L"DisplayGroup.Theme").get());
+    std::string myTheme = GetStringSettingSafe(L"DisplayGroup.Theme");
     std::string assetLarge = myTheme + "vlc_icon";
     std::string assetPlay  = myTheme + "play_icon";
     std::string assetPause = myTheme + "pause_icon";
     std::string assetStop  = myTheme + "stop_icon";
 
-    std::string myProvider = WStrToStr(WindhawkUtils::StringSetting(L"ButtonGroup.Provider").get());
+    std::string myProvider = GetStringSettingSafe(L"ButtonGroup.Provider");
     if (myProvider.empty()) myProvider = "Google";
     
-    std::string myCustomUrl = WStrToStr(WindhawkUtils::StringSetting(L"ButtonGroup.CustomUrl").get());
+    std::string myCustomUrl = GetStringSettingSafe(L"ButtonGroup.CustomUrl");
     
-    std::string myBtnLabel = WStrToStr(WindhawkUtils::StringSetting(L"ButtonGroup.ButtonLabel").get());
+    std::string myBtnLabel = GetStringSettingSafe(L"ButtonGroup.ButtonLabel");
     if (myBtnLabel.empty()) myBtnLabel = "Search This";
     myBtnLabel = SanitizeString(myBtnLabel);
 
-    std::string myMusicNameSetting = WStrToStr(WindhawkUtils::StringSetting(L"DisplayGroup.MusicActivityName").get());
+    std::string myMusicNameSetting = GetStringSettingSafe(L"DisplayGroup.MusicActivityName");
     if (myMusicNameSetting.empty()) myMusicNameSetting = "Title";
 
     int vlcPort = 0;
@@ -1955,15 +1970,16 @@ void Worker() {
                 
                 if (statusCode == 401) {
                     DWORD authSize = 0;
-                    WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, NULL, &authSize, WINHTTP_NO_HEADER_INDEX);
                     bool isVlc = false;
-                    if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-                        std::vector<WCHAR> authBuffer(authSize / sizeof(WCHAR));
-                        if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, authBuffer.data(), &authSize, WINHTTP_NO_HEADER_INDEX)) {
-                            std::wstring authStr(authBuffer.data());
-                            std::transform(authStr.begin(), authStr.end(), authStr.begin(), ::towupper);
-                            if (authStr.find(L"VLC") != std::wstring::npos) {
-                                isVlc = true;
+                    if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, NULL, &authSize, WINHTTP_NO_HEADER_INDEX)) {
+                        if (GetLastError() == ERROR_INSUFFICIENT_BUFFER && authSize > 0) {
+                            std::vector<WCHAR> authBuffer(authSize / sizeof(WCHAR) + 1, 0);
+                            if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, authBuffer.data(), &authSize, WINHTTP_NO_HEADER_INDEX)) {
+                                std::wstring authStr(authBuffer.data());
+                                std::transform(authStr.begin(), authStr.end(), authStr.begin(), ::towupper);
+                                if (authStr.find(L"VLC") != std::wstring::npos) {
+                                    isVlc = true;
+                                }
                             }
                         }
                     }
