@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const fontSans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -89,7 +89,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${outfit.variable} antialiased`}>
+      <body className={`${fontSans.variable} font-sans antialiased`}>
         {/* Grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
 
