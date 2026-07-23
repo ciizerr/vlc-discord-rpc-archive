@@ -245,7 +245,8 @@ Found a bug, have a suggestion, or need help?
 #include <shlobj.h>
 #include <sys/stat.h>
 #include <optional>
-#include <windhawk_utils.h>
+#include <chrono>
+#include <ctime>
 
 // =============================================================
 // ⚙️ GLOBALS
@@ -254,7 +255,31 @@ ULONG_PTR g_gdiplusToken = 0;
 std::atomic<bool> g_stopThread{false};
 [[clang::no_destroy]] std::optional<std::thread> g_workerThread;
 std::mutex g_asyncMutex;
-[[clang::no_destroy]] std::vector<std::thread> g_asyncThreads;
+
+struct AsyncTask {
+    std::thread thread;
+    std::shared_ptr<std::atomic<bool>> done;
+};
+[[clang::no_destroy]] std::optional<std::vector<AsyncTask>> g_asyncTasks{std::in_place};
+
+template <typename F>
+void RunAsync(F&& f) {
+    auto done = std::make_shared<std::atomic<bool>>(false);
+    std::thread t([f = std::forward<F>(f), done]() mutable {
+        f();
+        done->store(true);
+    });
+    std::lock_guard<std::mutex> lock(g_asyncMutex);
+    for (auto it = g_asyncTasks->begin(); it != g_asyncTasks->end();) {
+        if (it->done->load()) {
+            if (it->thread.joinable()) it->thread.join();
+            it = g_asyncTasks->erase(it);
+        } else {
+            ++it;
+        }
+    }
+    g_asyncTasks->push_back({std::move(t), std::move(done)});
+}
 const std::string SEP = " \xE2\x97\x8F ";
 
 std::map<std::string, std::string> g_imageCache;
@@ -358,6 +383,14 @@ std::wstring StrToWStr(const std::string& str) {
     std::wstring wstr(size, 0);
     MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstr[0], size);
     return wstr;
+}
+
+std::string GetStringSettingSafe(PCWSTR name) {
+    PCWSTR val = Wh_GetStringSetting(name);
+    if (!val) return "";
+    std::wstring wval(val);
+    Wh_FreeStringSetting(val);
+    return WStrToStr(wval);
 }
 
 void ReadVlcConfig(int& port, std::wstring& authBase64) {
@@ -743,6 +776,7 @@ std::string ExtractYear(const std::string& filename) {
 // =============================================================
 
 std::string FetchHttps(const std::wstring& host, const std::wstring& path) {
+    if (g_stopThread.load()) return "";
     std::string result = "";
     HINTERNET hSession = GetSharedWinHttpSession();
     if (!hSession) return "";
@@ -752,6 +786,7 @@ std::string FetchHttps(const std::wstring& host, const std::wstring& path) {
         HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
         if (hRequest) {
             std::wstring headers = L"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\n";
+            if (g_stopThread.load()) { WinHttpCloseHandle(hRequest); WinHttpCloseHandle(hConnect); return ""; }
             if (WinHttpSendRequest(hRequest, headers.c_str(), headers.length(), WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
                 WinHttpReceiveResponse(hRequest, NULL)) {
                 
@@ -767,7 +802,17 @@ std::string FetchHttps(const std::wstring& host, const std::wstring& path) {
                 } while (dwSize > 0);
             } else {
                 DWORD err = GetLastError();
-                Wh_Log(L"FetchHttps failed for %s%s (WinHttp error: %lu)", host.c_str(), path.c_str(), err);
+                std::wstring cleanPath = path;
+                size_t apiKeyPos = cleanPath.find(L"api_key=");
+                if (apiKeyPos != std::wstring::npos) {
+                    size_t ampPos = cleanPath.find(L"&", apiKeyPos);
+                    if (ampPos == std::wstring::npos) {
+                        cleanPath.replace(apiKeyPos + 8, std::wstring::npos, L"***");
+                    } else {
+                        cleanPath.replace(apiKeyPos + 8, ampPos - (apiKeyPos + 8), L"***");
+                    }
+                }
+                Wh_Log(L"FetchHttps failed for %s%s (WinHttp error: %lu)", host.c_str(), cleanPath.c_str(), err);
             }
             WinHttpCloseHandle(hRequest);
         }
@@ -1454,8 +1499,8 @@ std::string GetAudioLanguages(const std::string& json) {
             std::string lang = ExtractString(block, "Language");
             if (!lang.empty()) {
                 std::string shortLang = lang.substr(0, 2);
-                if (shortLang[0] >= 'a' && shortLang[0] <= 'z') shortLang[0] -= 32;
-                if (shortLang[1] >= 'a' && shortLang[1] <= 'z') shortLang[1] -= 32;
+                if (shortLang.length() > 0 && shortLang[0] >= 'a' && shortLang[0] <= 'z') shortLang[0] -= 32;
+                if (shortLang.length() > 1 && shortLang[1] >= 'a' && shortLang[1] <= 'z') shortLang[1] -= 32;
                 bool existsAll = false;
                 for (const auto& l : allLangs) if (l == shortLang) existsAll = true;
                 if (!existsAll) allLangs.push_back(shortLang);
@@ -1693,7 +1738,7 @@ void FetchRemoteFilters(bool strictLocalMode) {
 // =============================================================
 
 void ShowSystemToast(const std::wstring& title, const std::wstring& message, const std::string& imageUrl) {
-    std::thread t([title, message, imageUrl]() {
+    RunAsync([title, message, imageUrl]() {
         HICON hDynamicIcon = NULL;
 
         if (!imageUrl.empty() && imageUrl.find("http") == 0) {
@@ -1807,8 +1852,6 @@ void ShowSystemToast(const std::wstring& title, const std::wstring& message, con
         if (hDynamicIcon) DestroyIcon(hDynamicIcon);
         DestroyWindow(hwnd);
     });
-    std::lock_guard<std::mutex> lock(g_asyncMutex);
-    g_asyncThreads.emplace_back(std::move(t));
 }
 
 // =============================================================
@@ -1817,22 +1860,19 @@ void ShowSystemToast(const std::wstring& title, const std::wstring& message, con
 
 void Worker() {
     bool bStrictLocalMode = Wh_GetIntSetting(L"FilterGroup.StrictLocalMode");
-    if (!bStrictLocalMode && Wh_GetIntSetting(L"StrictLocalMode")) bStrictLocalMode = true;
-    
     FetchRemoteFilters(bStrictLocalMode);
+    
     std::string defaultId = "1465711556418474148"; 
-    std::string myClientId = WStrToStr(WindhawkUtils::StringSetting(L"AdvancedGroup.ClientId").get());
+    std::string myClientId = GetStringSettingSafe(L"AdvancedGroup.ClientId");
     if (myClientId.empty()) myClientId = defaultId;
     
     PruneMetadataDiskCache();
 
-    bool bStrictLocalMode = Wh_GetIntSetting(L"FilterGroup.StrictLocalMode");
-    FetchRemoteFilters(bStrictLocalMode);
-    
     bool bShowCoverArt = Wh_GetIntSetting(L"DisplayGroup.ShowCoverArt");
     bool bShowChapter = Wh_GetIntSetting(L"DisplayGroup.ShowChapter");
     bool bShowQualityTags = Wh_GetIntSetting(L"DisplayGroup.ShowQualityTags");
     bool bShowAudioLanguage = Wh_GetIntSetting(L"DisplayGroup.ShowAudioLanguage");
+    bool bEnableMetadataCleaner = Wh_GetIntSetting(L"FilterGroup.EnableMetadataCleaner");
     
     bool bEnableTmdbScraper = Wh_GetIntSetting(L"ScraperGroup.EnableTmdbScraper");
     bool bEnableTvMazeScraper = Wh_GetIntSetting(L"ScraperGroup.EnableTvMazeScraper");
@@ -1841,13 +1881,13 @@ void Worker() {
     bool bShowRuntime = Wh_GetIntSetting(L"ScraperGroup.ShowRuntime");
     bool bShowMediaType = Wh_GetIntSetting(L"ScraperGroup.ShowMediaType");
 
-    std::string customTmdbKey = WStrToStr(WindhawkUtils::StringSetting(L"ScraperGroup.CustomTmdbApiKey").get());
+    std::string customTmdbKey = GetStringSettingSafe(L"ScraperGroup.CustomTmdbApiKey");
     std::string activeTmdbKey = GetActiveTmdbApiKey(customTmdbKey);
     
     bool bMinimalMode = Wh_GetIntSetting(L"DisplayGroup.MinimalMode");
     bool bShowNotifications = Wh_GetIntSetting(L"DisplayGroup.ShowNotifications");
 
-    std::string customJunkStr = WStrToStr(WindhawkUtils::StringSetting(L"FilterGroup.CustomJunkWords").get());
+    std::string customJunkStr = GetStringSettingSafe(L"FilterGroup.CustomJunkWords");
     
     std::vector<std::string> customJunkList;
     std::stringstream ss(customJunkStr);
@@ -1861,33 +1901,31 @@ void Worker() {
         }
     }
 
-    std::string myTheme = WStrToStr(WindhawkUtils::StringSetting(L"DisplayGroup.Theme").get());
+    std::string myTheme = GetStringSettingSafe(L"DisplayGroup.Theme");
     std::string assetLarge = myTheme + "vlc_icon";
     std::string assetPlay  = myTheme + "play_icon";
     std::string assetPause = myTheme + "pause_icon";
     std::string assetStop  = myTheme + "stop_icon";
 
-    std::string myProvider = WStrToStr(WindhawkUtils::StringSetting(L"ButtonGroup.Provider").get());
+    std::string myProvider = GetStringSettingSafe(L"ButtonGroup.Provider");
     if (myProvider.empty()) myProvider = "Google";
     
-    std::string myCustomUrl = WStrToStr(WindhawkUtils::StringSetting(L"ButtonGroup.CustomUrl").get());
+    std::string myCustomUrl = GetStringSettingSafe(L"ButtonGroup.CustomUrl");
     
-    std::string myBtnLabel = WStrToStr(WindhawkUtils::StringSetting(L"ButtonGroup.ButtonLabel").get());
+    std::string myBtnLabel = GetStringSettingSafe(L"ButtonGroup.ButtonLabel");
     if (myBtnLabel.empty()) myBtnLabel = "Search This";
     myBtnLabel = SanitizeString(myBtnLabel);
 
-    std::string myMusicNameSetting = WStrToStr(WindhawkUtils::StringSetting(L"DisplayGroup.MusicActivityName").get());
+    std::string myMusicNameSetting = GetStringSettingSafe(L"DisplayGroup.MusicActivityName");
     if (myMusicNameSetting.empty()) myMusicNameSetting = "Title";
 
     int vlcPort = 0;
     std::wstring vlcAuthBase64 = L"OjEyMzQ=";
     ReadVlcConfig(vlcPort, vlcAuthBase64);
 
-    bool bUseCustomPort = false;
-    int customPort = Wh_GetIntSetting(L"AdvancedGroup.CustomVlcPort");
+    int customPort = Wh_GetIntSetting(L"AdvancedGroup.CustomPort");
     if (customPort > 0) {
         vlcPort = customPort;
-        bUseCustomPort = true;
     }
     
     std::vector<int> candidatePorts;
@@ -1944,38 +1982,24 @@ void Worker() {
         if (hConnect) hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/requests/status.json", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
 
         bool requestSuccess = false;
+        DWORD savedErr = 0;
         if (hRequest) {
-            std::wstring headers = L"Authorization: Basic " + vlcAuthBase64;
-            if (WinHttpSendRequest(hRequest, headers.c_str(), headers.length(), WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
+            // Always send the Authorization header upfront. VLC returns 401 with wrong
+            // password and 200 on success. Any valid HTTP response means we reached VLC.
+            std::wstring authHeaders = L"Authorization: Basic " + vlcAuthBase64;
+            if (WinHttpSendRequest(hRequest, authHeaders.c_str(), authHeaders.length(), WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
                 WinHttpReceiveResponse(hRequest, NULL)) {
-                
+
                 DWORD statusCode = 0;
                 DWORD dwSizeStatus = sizeof(statusCode);
                 WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, WINHTTP_HEADER_NAME_BY_INDEX, &statusCode, &dwSizeStatus, WINHTTP_NO_HEADER_INDEX);
-                
+
                 if (statusCode == 401) {
-                    DWORD authSize = 0;
-                    WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, NULL, &authSize, WINHTTP_NO_HEADER_INDEX);
-                    bool isVlc = false;
-                    if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-                        std::vector<WCHAR> authBuffer(authSize / sizeof(WCHAR));
-                        if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, authBuffer.data(), &authSize, WINHTTP_NO_HEADER_INDEX)) {
-                            std::wstring authStr(authBuffer.data());
-                            std::transform(authStr.begin(), authStr.end(), authStr.begin(), ::towupper);
-                            if (authStr.find(L"VLC") != std::wstring::npos) {
-                                isVlc = true;
-                            }
-                        }
+                    if (!logged401) {
+                        Wh_Log(L"Auth failed (401) on port %d. Check the Lua HTTP password in %%APPDATA%%\\vlc\\vlcrc.", activePort);
+                        logged401 = true;
                     }
-                    if (isVlc) {
-                        if (!logged401) {
-                            Wh_Log(L"Auth failed (401) on port %d. Check the Lua HTTP password in %%APPDATA%%\\vlc\\vlcrc.", activePort);
-                            logged401 = true;
-                        }
-                        requestSuccess = true;
-                    } else {
-                        requestSuccess = false;
-                    }
+                    requestSuccess = true;
                 } else if (statusCode == 200) {
                     if (!logged200) {
                         Wh_Log(L"Connected to VLC on port %d.", activePort);
@@ -2267,7 +2291,7 @@ void Worker() {
                                         int eNumCopy = tvEpisode;
                                         std::string tmdbKeyCopy = activeTmdbKey;
                                         std::string cacheKeyCopy = activeMediaCacheKey;
-                                        std::thread([cacheKeyCopy, mediaTitle, dateCopy, isTvCopy, sNumCopy, eNumCopy, bEnableTmdbScraper, bEnableTvMazeScraper, tmdbKeyCopy]() {
+                                        RunAsync([cacheKeyCopy, mediaTitle, dateCopy, isTvCopy, sNumCopy, eNumCopy, bEnableTmdbScraper, bEnableTvMazeScraper, tmdbKeyCopy]() {
                                             Wh_Log(L"Scraper thread started: media='%S', isTv=%d, TMDB=%d, TVMaze=%d", mediaTitle.c_str(), isTvCopy ? 1 : 0, bEnableTmdbScraper ? 1 : 0, bEnableTvMazeScraper ? 1 : 0);
                                             TvShowMetadata res;
                                             if (isTvCopy && bEnableTvMazeScraper) {
@@ -2285,7 +2309,7 @@ void Worker() {
                                                 g_imageCache[cacheKeyCopy] = res.posterUrl;
                                             }
                                             g_tvFetchInProgress[cacheKeyCopy] = false;
-                                        }).detach();
+                                        });
                                     }
                                 }
 
@@ -2368,27 +2392,23 @@ void Worker() {
                                     if (!alreadyFetching) {
                                         if (isUpload) {
                                             std::string artUrl = artworkUrl;
-                                            std::thread t([targetCacheKey, artUrl]() {
+                                            RunAsync([targetCacheKey, artUrl]() {
                                                 std::string result = UploadToUguu(artUrl);
                                                 std::lock_guard<std::mutex> lock(g_cacheMutex);
                                                 g_imageCache[targetCacheKey] = result;
                                                 g_fetchInProgress[targetCacheKey] = false;
                                             });
-                                            std::lock_guard<std::mutex> alock(g_asyncMutex);
-                                            g_asyncThreads.emplace_back(std::move(t));
                                         } else {
                                             int aType = activityType;
                                             std::string qTitle = (activityType == 2) ? (title.empty() ? filename : title) : activityName;
                                             std::string qSub = (activityType == 2) ? artist : date;
                                             bool isTv = (!showName.empty() && !episode.empty()) || (bEnableTvMazeScraper && targetCacheKey.find("MEDIA_TV_") == 0);
-                                            std::thread t([targetCacheKey, aType, qTitle, qSub, isTv]() {
+                                            RunAsync([targetCacheKey, aType, qTitle, qSub, isTv]() {
                                                 std::string result = FindExternalArtwork(aType, qTitle, qSub, isTv);
                                                 std::lock_guard<std::mutex> lock(g_cacheMutex);
                                                 g_imageCache[targetCacheKey] = result;
                                                 g_fetchInProgress[targetCacheKey] = false;
                                             });
-                                            std::lock_guard<std::mutex> alock(g_asyncMutex);
-                                            g_asyncThreads.emplace_back(std::move(t));
                                         }
                                     }
                                 } else if (!foundInCache && isMediaScraperTarget) {
@@ -2404,6 +2424,11 @@ void Worker() {
                                     }
                                     if (mediaFinishedWithoutPoster) {
                                         std::string fallbackKey = "EXT_" + NumToStr(activityType) + "_" + activityName + date + (targetCacheKey.find("MEDIA_TV_") == 0 ? "_TV" : "");
+                                        bool shouldSpawnFallback = false;
+                                        int aType = activityType;
+                                        std::string qTitle = activityName;
+                                        std::string qSub = date;
+                                        bool isTvFallback = (targetCacheKey.find("MEDIA_TV_") == 0);
                                         {
                                             std::lock_guard<std::mutex> lock(g_cacheMutex);
                                             if (g_imageCache.find(fallbackKey) != g_imageCache.end()) {
@@ -2411,19 +2436,16 @@ void Worker() {
                                                 if (displayImage.empty() || displayImage.find("http") != 0) displayImage = assetLarge; 
                                             } else if (!g_fetchInProgress[fallbackKey]) {
                                                 g_fetchInProgress[fallbackKey] = true;
-                                                int aType = activityType;
-                                                std::string qTitle = activityName;
-                                                std::string qSub = date;
-                                                bool isTvFallback = (targetCacheKey.find("MEDIA_TV_") == 0);
-                                                std::thread t([fallbackKey, aType, qTitle, qSub, isTvFallback]() {
-                                                    std::string result = FindExternalArtwork(aType, qTitle, qSub, isTvFallback);
-                                                    std::lock_guard<std::mutex> lock(g_cacheMutex);
-                                                    g_imageCache[fallbackKey] = result;
-                                                    g_fetchInProgress[fallbackKey] = false;
-                                                });
-                                                std::lock_guard<std::mutex> alock(g_asyncMutex);
-                                                g_asyncThreads.emplace_back(std::move(t));
+                                                shouldSpawnFallback = true;
                                             }
+                                        }
+                                        if (shouldSpawnFallback) {
+                                            RunAsync([fallbackKey, aType, qTitle, qSub, isTvFallback]() {
+                                                std::string result = FindExternalArtwork(aType, qTitle, qSub, isTvFallback);
+                                                std::lock_guard<std::mutex> lock(g_cacheMutex);
+                                                g_imageCache[fallbackKey] = result;
+                                                g_fetchInProgress[fallbackKey] = false;
+                                            });
                                         }
                                     }
                                 }
@@ -2470,6 +2492,14 @@ void Worker() {
                             }
 
                             if (isConnected) {
+                                DWORD bytesAvail = 0;
+                                while (PeekNamedPipe(hPipe, NULL, 0, NULL, &bytesAvail, NULL) && bytesAvail > 0) {
+                                    char sink[1024];
+                                    DWORD toRead = (DWORD)std::min((size_t)bytesAvail, sizeof(sink));
+                                    DWORD br;
+                                    if (!ReadFile(hPipe, sink, toRead, &br, NULL) || br == 0) break;
+                                }
+
                                 std::string state = isPlaying ? "Playing" : "Paused";
                                 if (query.empty()) query = "VLC Media Player";
                                 std::string btnUrl = GenerateButtonUrl(query, myProvider, myCustomUrl);
@@ -2484,7 +2514,7 @@ void Worker() {
                                 js += "\"type\":" + NumToStr(activityType) + ",";
                                 js += "\"name\":\"" + SanitizeString(activityName) + "\","; 
                                 
-                                js += "\"assets\":{\"large_image\":\"" + displayImage + "\",\"large_text\":\"" + SanitizeString(largeText) + "\"";
+                                js += "\"assets\":{\"large_image\":\"" + SanitizeString(displayImage) + "\",\"large_text\":\"" + SanitizeString(largeText) + "\"";
                                 if (!bMinimalMode) {
                                     js += ",\"small_image\":\"" + (isPlaying ? assetPlay : assetPause) + "\",\"small_text\":\"" + state + "\"";
                                 }
@@ -2520,14 +2550,15 @@ void Worker() {
                         }
                     }
                 }
-            } 
+            } else {
+                savedErr = GetLastError(); // capture before any WinHttpCloseHandle clears it
+            }
             WinHttpCloseHandle(hRequest); hRequest = NULL;
         }
 
         if (!requestSuccess) {
-            DWORD err = GetLastError();
             if (!loggedFailure) {
-                Wh_Log(L"Could not reach VLC on port %d (WinHttp error %lu). Trying fallback ports...", activePort, err);
+                Wh_Log(L"Could not reach VLC on port %d (WinHttp error %lu). Trying fallback ports...", activePort, savedErr);
                 loggedFailure = true;
             }
             if (hConnect) { WinHttpCloseHandle(hConnect); hConnect = NULL; }
@@ -2560,6 +2591,18 @@ BOOL Wh_ModInit() {
 
 void Wh_ModUninit() {
     g_stopThread = true;
+
+    // Close the shared WinHttp session first — this aborts any in-flight async
+    // HTTP requests (scraper, artwork) immediately, so the thread joins below
+    // complete in milliseconds rather than waiting out 3-second per-request timeouts.
+    {
+        std::lock_guard<std::mutex> lock(g_sessionMutex);
+        if (g_hWinHttpSession) {
+            WinHttpCloseHandle(g_hWinHttpSession);
+            g_hWinHttpSession = NULL;
+        }
+    }
+
     if (g_workerThread && g_workerThread->joinable()) {
         g_workerThread->join();
     }
@@ -2567,21 +2610,17 @@ void Wh_ModUninit() {
 
     {
         std::lock_guard<std::mutex> lock(g_asyncMutex);
-        for (auto& t : g_asyncThreads) {
-            if (t.joinable()) {
-                t.join();
+        if (g_asyncTasks.has_value()) {
+            for (auto& t : *g_asyncTasks) {
+                if (t.thread.joinable()) {
+                    t.thread.join();
+                }
             }
+            g_asyncTasks.reset();
         }
-        g_asyncThreads.clear();
     }
 
     Gdiplus::GdiplusShutdown(g_gdiplusToken);
-    
-    std::lock_guard<std::mutex> lock(g_sessionMutex);
-    if (g_hWinHttpSession) {
-        WinHttpCloseHandle(g_hWinHttpSession);
-        g_hWinHttpSession = NULL;
-    }
 }
 
 BOOL Wh_ModSettingsChanged(BOOL* bReload) {
