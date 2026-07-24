@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const fontSans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -70,6 +70,9 @@ export const metadata: Metadata = {
 
 import { SettingsProvider } from "@/context/SettingsContext";
 import Script from "next/script";
+import GlobalSearch from "@/components/GlobalSearch";
+import EasterEggBanner from "@/components/EasterEggBanner";
+import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -89,13 +92,18 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${fontSans.variable} font-sans antialiased`}>
         {/* Grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
+        <GlobalSearch />
 
         <SettingsProvider>
           {children}
         </SettingsProvider>
+        
+        <Suspense>
+          <EasterEggBanner />
+        </Suspense>
       </body>
     </html>
   );

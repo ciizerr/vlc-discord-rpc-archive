@@ -129,10 +129,15 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Final Disclaimer */}
-                    <p className="mt-8 text-center text-[10px] text-[#27272a] leading-relaxed uppercase tracking-[0.1em] font-bold">
-                        VLC RPC is an independent project. Not affiliated with VideoLAN, Discord, or Windhawk.
-                    </p>
+                    {/* Final Disclaimer & Attribution */}
+                    <div className="mt-8 text-center space-y-2">
+                        <p className="text-[10px] text-[#27272a] leading-relaxed uppercase tracking-[0.1em] font-bold">
+                            VLC RPC is an independent project. Not affiliated with VideoLAN, Discord, or Windhawk.
+                        </p>
+                        <p className="text-[11px] text-[#3f3f46]">
+                            Metadata is provided by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF9500] transition-colors">TMDb</a> and <a href="https://www.tvmaze.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF9500] transition-colors">TVMaze</a>. This product uses the TMDb API but is not endorsed or certified by TMDb.
+                        </p>
+                    </div>
                 </div>
             </div>
         </footer>

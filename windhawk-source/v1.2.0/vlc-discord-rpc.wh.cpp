@@ -1995,9 +1995,28 @@ void Worker() {
                 WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, WINHTTP_HEADER_NAME_BY_INDEX, &statusCode, &dwSizeStatus, WINHTTP_NO_HEADER_INDEX);
 
                 if (statusCode == 401) {
-                    if (!logged401) {
-                        Wh_Log(L"Auth failed (401) on port %d. Check the Lua HTTP password in %%APPDATA%%\\vlc\\vlcrc.", activePort);
-                        logged401 = true;
+                    DWORD authSize = 0;
+                    bool isVlc = false;
+                    if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, NULL, &authSize, WINHTTP_NO_HEADER_INDEX)) {
+                        if (GetLastError() == ERROR_INSUFFICIENT_BUFFER && authSize > 0) {
+                            std::vector<WCHAR> authBuffer(authSize / sizeof(WCHAR) + 1, 0);
+                            if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_WWW_AUTHENTICATE, WINHTTP_HEADER_NAME_BY_INDEX, authBuffer.data(), &authSize, WINHTTP_NO_HEADER_INDEX)) {
+                                std::wstring authStr(authBuffer.data());
+                                std::transform(authStr.begin(), authStr.end(), authStr.begin(), ::towupper);
+                                if (authStr.find(L"VLC") != std::wstring::npos) {
+                                    isVlc = true;
+                                }
+                            }
+                        }
+                    }
+                    if (isVlc) {
+                        if (!logged401) {
+                            Wh_Log(L"Auth failed (401) on port %d. Check the Lua HTTP password in %%APPDATA%%\\vlc\\vlcrc.", activePort);
+                            logged401 = true;
+                        }
+                        requestSuccess = true;
+                    } else {
+                        requestSuccess = false;
                     }
                     requestSuccess = true;
                 } else if (statusCode == 200) {

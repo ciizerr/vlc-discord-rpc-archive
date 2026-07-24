@@ -21,22 +21,28 @@ Minimalist integration for VLC Media Player to display what you're watching or l
 
 Display rich presence data directly from VLC to your Discord profile.
 
-- **🆕 Smart Cover Art Engine**: Automatically fetches and displays album art and movie posters (local metadata or scraped from the web).
-- **📝 Metadata Scrubber**: Intelligently strips piracy site URLs, scene releases, and junk tags for clean titles.
+- **🍿 Multi-Engine Scraper**: Automatically fetches official titles, episode names, ⭐ ratings, genres, and exact runtimes from **TMDB** and **TVMaze**.
+- **🖼️ Cover Art**: Uploads local album art automatically. Fallbacks to searching official databases and the web for a matching poster.
+- **🧹 Smart Title Cleaning**: Intelligently strips piracy site URLs, scene releases, and junk tags for clean titles.
 - **🎧 Context-Aware Status**: Switches dynamically between "Listening to...", "Watching TV...", and "Watching Movie...".
-- **📊 Live Progress**: Functional progress bar tracking your media playback tracking.
-- **🏷️ Rich Metadata**: Displays resolution (4K, 1080p), HDR, and audio languages.
+- **📺 Quality Tags**: Displays resolution and format badges like 4K, HDR, or 1080p next to the title.
 - **🔍 "Search This" Button**: One-click search on Google, IMDb, or YouTube directly from your profile.
-- **🎨 Theme Support**: Light and Dark mode icons available.
+- **🎨 Themes & Minimal Mode**: Light/Dark mode icons available, plus an option to hide the small play/pause badge.
 
 ---
 ## ↪ Preview
 
-**Default Theme:**
-![Default](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/default.gif)
+### Rich Metadata (Movies & TV)
 
-**Dark Theme:**
-![Dark](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/dark_.gif)
+| Movies | TV Series |
+| :---: | :---: |
+| ![movies](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/movies.png) | ![series](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/series.png) |
+
+### Icon Themes
+
+| Default (Orange VLC Cone) | Dark (Low-light setups) |
+| :---: | :---: |
+| ![default theme](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/default.gif) | ![dark theme](https://raw.githubusercontent.com/ciizerr/vlc-discord-rpc-archive/main/screenshots/themes/dark_.gif) |
 
 ---
 ## 🚀 One-Time VLC Setup (Required for All Methods)

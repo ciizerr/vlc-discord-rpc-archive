@@ -32,11 +32,13 @@ const musicData = {
     timestamp: 48 // 00:48
 };
 
-// Video mode data
+// Video mode data (v1.2.0 Rich Metadata)
 const videoData = {
-    title: "IT Welcome to Derry",
-    details: "S01E07 • Ch 1 • EN",
-    duration: 61 * 60 + 3 // 01:01:03
+    title: "Squid Game",
+    year: "2021",
+    episode: "S01 E01 – Red Light, Green Light",
+    stats: "⭐ 8.1 | Action, Drama",
+    duration: 59 * 60 + 12 // 00:59:12
 };
 
 export default function DiscordCard({ mode, settings }: DiscordCardProps) {
@@ -110,7 +112,7 @@ export default function DiscordCard({ mode, settings }: DiscordCardProps) {
 
     const headerText = isStopped
         ? 'Playing'
-        : (mode === 'music' 
+        : (mode === 'music'
             ? (s.musicLabel === "Title" ? `Listening to ${musicData.track}` : s.musicLabel === "Artist" ? `Listening to ${musicData.artist}` : `Listening to ${musicData.album}`)
             : `Watching ${videoData.title}`);
 
@@ -122,18 +124,16 @@ export default function DiscordCard({ mode, settings }: DiscordCardProps) {
         subDetailText = isStopped ? 'Waiting for media...' : musicData.album;
     } else {
         const tags = s.showQualityTags ? ' • 4K • HDR' : '';
-        title = isStopped ? 'VLC Media Player' : `${videoData.title}${tags}`;
-        subtitle = isStopped ? 'Idling' : videoData.details;
+        title = isStopped ? 'VLC Media Player' : `${videoData.title} (${videoData.year})${tags}`;
+        subtitle = isStopped ? 'Idling' : videoData.episode;
         const stateText = isStopped ? 'Waiting for media...' : `(${status === 'playing' ? 'Playing' : 'Paused'})`;
-        const detailText = isStopped ? subtitle : `${subtitle} ${stateText}`;
-        subtitle = detailText;
-        subDetailText = isStopped ? 'Waiting for media...' : null;
+        subDetailText = isStopped ? 'Waiting for media...' : `${videoData.stats} ${stateText}`;
     }
 
-    const imageSrc = s.showCoverArt 
+    const imageSrc = s.showCoverArt
         ? (mode === 'music'
             ? (isStopped ? vlcIcon : "/album_art.png")
-            : (isStopped ? vlcIcon : "/album_art_movie.webp"))
+            : (isStopped ? vlcIcon : "/album_art_show.webp"))
         : vlcIcon;
 
     return (
@@ -201,7 +201,7 @@ export default function DiscordCard({ mode, settings }: DiscordCardProps) {
             {/* Buttons */}
             <div className="mt-4">
                 <button
-                    onClick={() => window.open(`https://www.google.com/search?q=${mode === 'music' ? 'Chilli+Beans+Raise' : 'IT+Welcome+to+Derry'}`, "_blank")}
+                    onClick={() => window.open(`https://www.google.com/search?q=${mode === 'music' ? 'Chilli+Beans+Raise' : 'Squid+Game'}`, "_blank")}
                     className="w-full h-[32px] rounded bg-[#383a40] text-sm text-[#f2f3f5] font-medium hover:bg-[#474a52] transition-colors truncate flex items-center justify-center hover:underline cursor-pointer"
                 >
                     {s.buttonLabel}

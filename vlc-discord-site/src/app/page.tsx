@@ -10,6 +10,7 @@ import IconSubmission from "@/components/IconSubmission";
 import Footer from "@/components/Footer";
 import { getChangelogContent } from "@/lib/source-reader";
 import LogoLoop from "@/components/LogoLoop";
+import MediaDiscoveryCarousel from "@/components/MediaDiscoveryCarousel";
 
 export default async function Home() {
   const changelogContent = await getChangelogContent();
@@ -63,9 +64,14 @@ export default async function Home() {
 
         {/* Interactive Showcase */}
         <SettingsShowcase />
+      </div>
 
-        {/* Divider */}
-        <div className="section-divider" />
+      {/* Recently Viewed (Full Width) */}
+      <div className="relative z-10 w-full">
+        <MediaDiscoveryCarousel />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
 
         {/* Installation */}
         <InstallationGuide />
