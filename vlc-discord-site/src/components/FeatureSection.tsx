@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { RefreshCw, Tv, Search, Cpu, Lock, Layout } from "lucide-react";
+import { RefreshCw, Tv, Cpu, Lock, Layout, Database } from "lucide-react";
 
 interface Feature {
     icon: React.ReactNode;
@@ -38,22 +38,22 @@ const bentoFeatures: Feature[] = [
     {
         icon: <Tv size={24} strokeWidth={2} />,
         title: "Deep Metadata",
-        description: "TV shows show Season/Episode. Music shows Artist/Album. Includes active audio language and quality badges.",
+        description: "Rich details including Release Year, Genres, ⭐ Rating, and Runtime alongside accurate Season/Episode detection.",
         label: "Information",
         span: "md:col-span-1 md:row-span-1",
     },
     {
         icon: <RefreshCw size={24} strokeWidth={2} />,
-        title: "Smart Cover Art",
-        description: "Automatic local art uploads with Bing fallback for posters.",
+        title: "Multi-Engine Scraper",
+        description: "Powered by TMDb and TVMaze for lightning-fast matching and pixel-perfect high-quality posters.",
         label: "Visuals",
         span: "md:col-span-1 md:row-span-1",
     },
     {
-        icon: <Search size={24} strokeWidth={2} />,
-        title: "Interactive Search",
-        description: "Configurable search button for Google, IMDb, or YouTube.",
-        label: "Interaction",
+        icon: <Database size={24} strokeWidth={2} />,
+        title: "30-Day Smart Cache",
+        description: "Metadata is cached locally for 30 days, ensuring instant status updates and eliminating unnecessary network requests.",
+        label: "Performance",
         span: "md:col-span-1 md:row-span-1",
     },
 ];

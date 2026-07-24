@@ -135,8 +135,8 @@ export default function SettingsShowcase() {
                             {/* Switches Grid */}
                             <div className="grid grid-cols-1 gap-4">
                                 <SettingSwitch
-                                    label="Cover Art"
-                                    description="Web & local artwork search"
+                                    label="Rich Metadata"
+                                    description="Web metadata & artwork search"
                                     icon={<ImageIcon size={18} />}
                                     active={settings.showCoverArt}
                                     onToggle={() => toggleSetting('showCoverArt')}
@@ -275,13 +275,13 @@ export default function SettingsShowcase() {
                             <li className="flex gap-3">
                                 <div className="mt-1 w-1.5 h-1.5 rounded-full bg-[#FF9500] shrink-0" />
                                 <p className="text-[13px] text-[#71717a] leading-relaxed">
-                                    <strong className="text-[#a1a1aa]">Metadata Cleaner:</strong> Automatically strips scene tags (WEB-DL, x265) and piracy URLs from filenames.
+                                    <strong className="text-[#a1a1aa]">Multi-Engine Metadata:</strong> Pulls incredibly accurate data from TMDb and TVMaze.
                                 </p>
                             </li>
                             <li className="flex gap-3">
                                 <div className="mt-1 w-1.5 h-1.5 rounded-full bg-[#FF9500] shrink-0" />
                                 <p className="text-[13px] text-[#71717a] leading-relaxed">
-                                    <strong className="text-[#a1a1aa]">Local Filters:</strong> Keep title cleaning offline to ensure 100% privacy and zero external requests.
+                                    <strong className="text-[#a1a1aa]">Smart Local Caching:</strong> Stores metadata locally for 30 days to ensure instant lookups and zero API spam.
                                 </p>
                             </li>
                         </ul>

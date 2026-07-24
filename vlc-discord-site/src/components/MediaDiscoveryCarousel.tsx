@@ -18,8 +18,8 @@ interface RecentItem {
 }
 
 interface MediaDiscoveryProps {
-  recommendations: MediaRecommendation[];
-  currentMedia: {
+  recommendations?: MediaRecommendation[];
+  currentMedia?: {
     id: string;
     title: string;
     posterPath: string | null;
@@ -29,7 +29,7 @@ interface MediaDiscoveryProps {
   };
 }
 
-export default function MediaDiscoveryCarousel({ recommendations, currentMedia }: MediaDiscoveryProps) {
+export default function MediaDiscoveryCarousel({ recommendations = [], currentMedia }: MediaDiscoveryProps) {
   const [recentItems, setRecentItems] = useState<RecentItem[]>([]);
   const recentScrollRef = useRef<HTMLDivElement>(null);
 
@@ -53,30 +53,36 @@ export default function MediaDiscoveryCarousel({ recommendations, currentMedia }
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const currentUrl = currentMedia.mediaType === "movie" 
-      ? `/movie/${currentMedia.id}` 
-      : `/show/${currentMedia.source}/${currentMedia.id}`;
-
-    const newItem: RecentItem = {
-      id: currentMedia.id,
-      title: currentMedia.title,
-      posterPath: currentMedia.posterPath,
-      releaseYear: currentMedia.releaseYear,
-      mediaType: currentMedia.mediaType,
-      source: currentMedia.source,
-      url: currentUrl,
-    };
-
     try {
       const stored = localStorage.getItem("vlc_rpc_recent_media");
       const list: RecentItem[] = stored ? JSON.parse(stored) : [];
+
+      if (!currentMedia) {
+        setTimeout(() => setRecentItems(list), 0);
+        return;
+      }
+
+      const currentUrl = currentMedia.mediaType === "movie" 
+        ? `/movie/${currentMedia.id}` 
+        : `/show/${currentMedia.source}/${currentMedia.id}`;
+
+      const newItem: RecentItem = {
+        id: currentMedia.id,
+        title: currentMedia.title,
+        posterPath: currentMedia.posterPath,
+        releaseYear: currentMedia.releaseYear,
+        mediaType: currentMedia.mediaType,
+        source: currentMedia.source,
+        url: currentUrl,
+      };
+
       const updatedList = list.filter(item => item.url !== currentUrl);
-      
       const nextStoredList = [newItem, ...updatedList].slice(0, 8);
+      
       localStorage.setItem("vlc_rpc_recent_media", JSON.stringify(nextStoredList));
 
       setTimeout(() => {
-        setRecentItems(updatedList);
+        setRecentItems(nextStoredList); // Using nextStoredList to include current item
       }, 0);
     } catch {
       // localStorage fallback ignore

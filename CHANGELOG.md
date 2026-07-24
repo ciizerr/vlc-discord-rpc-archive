@@ -1,8 +1,8 @@
 # Changelog
 
-## v1.2.0 (2026-07-22)
-
-## ✨ Added
+## v1.2.0 (2026-07-23)
+ **Note:** This is the **final release supporting Windhawk v1.x.x**.
+### ✨ Added
 
 - Added a **multi-engine metadata scraper** for more accurate movie and TV information.
 - Added **TVMaze support** for TV shows, providing faster lookups and improving metadata accuracy.
@@ -16,7 +16,7 @@
 - Added a **30-day local metadata cache** to speed up repeat lookups and reduce unnecessary network requests.
 - Reorganized mod settings into clear categories for easier navigation.
 
-## 🚀 Improved
+### 🚀 Improved
 
 - Improved metadata lookup speed with faster loading times.
 - Improved title matching for files containing scene names, quality tags, release groups, and other unnecessary text.
@@ -26,14 +26,13 @@
 - Improved compatibility with existing settings so previous configurations continue to work after updating.
 - Improved overall stability when enabling, disabling, or reloading the mod.
 
-## 🛠️ Fixed
+### 🛠️ Fixed
 
 - Fixed incorrect posters being displayed for movies that are part of a collection (box sets). The correct movie poster is now shown.
 - Fixed metadata matching issues caused by noisy or poorly formatted filenames.
 - Fixed cases where title cleaning could accidentally remove parts of valid movie or TV show names.
 - Fixed duplicate metadata notifications in some situations.
 
-> **Note:** This is the **final release supporting Windhawk v1.x.x**.
 
 ## v1.1.5 (2026-05-11)
 

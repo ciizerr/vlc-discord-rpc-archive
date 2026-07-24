@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ArrowRight, ExternalLink } from "lucide-react";
+import { Menu, X, ArrowRight, ExternalLink, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
@@ -80,6 +80,25 @@ export default function Navbar() {
 
                 {/* Right: CTA */}
                 <div className="flex items-center gap-3">
+                    <AnimatePresence>
+                        {scrolled && (
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                onClick={() => window.dispatchEvent(new Event("open-search"))}
+                                className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-white transition-all group cursor-pointer"
+                                aria-label="Open Search (Ctrl+K)"
+                                title="Search (Ctrl+K or /)"
+                            >
+                                <Search size={14} className="text-[#FF9500] shrink-0" />
+                                <span className="text-[13px] font-semibold text-[#a1a1aa] group-hover:text-white hidden lg:inline">Search</span>
+                                <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-black/40 text-[10px] font-mono text-[#71717a] group-hover:text-[#a1a1aa] transition-colors ml-1">
+                                    Ctrl K
+                                </kbd>
+                            </motion.button>
+                        )}
+                    </AnimatePresence>
                     <Link
                         href="https://windhawk.net/mods/vlc-discord-rpc"
                         className={`hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300

@@ -70,6 +70,9 @@ export const metadata: Metadata = {
 
 import { SettingsProvider } from "@/context/SettingsContext";
 import Script from "next/script";
+import GlobalSearch from "@/components/GlobalSearch";
+import EasterEggBanner from "@/components/EasterEggBanner";
+import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -92,10 +95,15 @@ export default function RootLayout({
       <body className={`${fontSans.variable} font-sans antialiased`}>
         {/* Grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
+        <GlobalSearch />
 
         <SettingsProvider>
           {children}
         </SettingsProvider>
+        
+        <Suspense>
+          <EasterEggBanner />
+        </Suspense>
       </body>
     </html>
   );

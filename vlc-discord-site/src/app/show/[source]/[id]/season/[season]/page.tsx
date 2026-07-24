@@ -4,10 +4,9 @@ import MediaNavigation from "@/components/MediaNavigation";
 import MediaFooter from "@/components/MediaFooter";
 import MediaFallbackCard from "@/components/MediaFallbackCard";
 import { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Layers, Calendar, Tv } from "lucide-react";
+import { Layers, Calendar, Tv } from "lucide-react";
 
 type Props = {
   params: Promise<{ source: string; id: string; season: string }>;
@@ -84,7 +83,12 @@ export default async function SeasonPage(props: Props) {
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col relative z-0 selection:bg-amber-500/30 selection:text-amber-200">
-      <MediaNavigation title={`${media.title} - Season ${seasonNumber}`} mediaType="show" />
+      <MediaNavigation
+        title={`${media.title} - Season ${seasonNumber}`}
+        mediaType="show"
+        backHref={showUrl}
+        backLabel={media.title}
+      />
 
       {/* Season Hero Section */}
       <div className="relative w-full overflow-hidden pb-8">
@@ -101,14 +105,6 @@ export default async function SeasonPage(props: Props) {
 
         {/* Foreground Card */}
         <div className="container mx-auto px-4 md:px-8 relative z-10 -mt-36 md:-mt-48">
-          {/* Back to Show Button */}
-          <Link
-            href={showUrl}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold text-amber-300 hover:text-amber-200 transition-all backdrop-blur-md mb-6 shadow-xl group/btn"
-          >
-            <ArrowLeft size={14} className="group-hover/btn:-translate-x-1 transition-transform" />
-            <span>Back to {media.title}</span>
-          </Link>
 
           <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8">
             {/* Season Poster Cover */}
