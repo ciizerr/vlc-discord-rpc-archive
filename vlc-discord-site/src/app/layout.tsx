@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/assets/vlc-discord-icon.png',
+        url: '/api/og?type=home',
         width: 1200,
         height: 630,
         alt: 'VLC Discord RPC Preview',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "VLC Discord RPC | Native Rich Presence Mod",
     description: "Boost your Discord profile with the ultimate VLC to Discord Rich Presence integration. Lightweight, privacy-focused, no bloatware.",
-    images: ['/assets/vlc-discord-icon.png'],
+    images: ['/api/og?type=home'],
   },
   icons: {
     icon: "/assets/vlc-discord-icon.png",

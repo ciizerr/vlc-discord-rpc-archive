@@ -24,6 +24,7 @@ export default function MediaNavigation({ title, backToPrevious = false, backHre
   const [shareOpen, setShareOpen] = useState(false);
   const [isVlcHovered, setIsVlcHovered] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +34,20 @@ export default function MediaNavigation({ title, backToPrevious = false, backHre
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsVlcHovered(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   const openSearch = () => {
@@ -66,27 +81,27 @@ export default function MediaNavigation({ title, backToPrevious = false, backHre
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-40 w-full pt-4 pb-12 pointer-events-none">
+      <header className="fixed top-0 left-0 right-0 z-40 w-full pt-3 sm:pt-4 pb-8 sm:pb-12 pointer-events-none">
         <div
           className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/50 to-transparent pointer-events-none transition-opacity duration-75"
           style={{ opacity }}
         />
 
-        <div className="container mx-auto px-4 md:px-8 flex items-center justify-between pointer-events-auto relative z-10">
+        <div className="container mx-auto px-3 sm:px-4 md:px-8 flex items-center justify-between pointer-events-auto relative z-10 gap-2">
           {/* Left: Back / Home + Share */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Link
               href={backHref ?? "/"}
               onClick={backHref ? undefined : handleBackClick}
-              className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/40 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all text-sm font-medium backdrop-blur-md group cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-black/50 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all text-xs sm:text-sm font-medium backdrop-blur-md group cursor-pointer"
             >
-              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-              <span>{backLabel ?? (backToPrevious ? "Back" : "Home")}</span>
+              <ArrowLeft size={16} className="shrink-0 group-hover:-translate-x-1 transition-transform" />
+              <span className="max-w-[110px] xs:max-w-[160px] sm:max-w-none truncate">{backLabel ?? (backToPrevious ? "Back" : "Home")}</span>
             </Link>
 
             <button
               onClick={() => setShareOpen(true)}
-              className="group flex items-center gap-0 hover:gap-2 px-2.5 py-1.5 rounded-full bg-black/40 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all duration-300 backdrop-blur-md overflow-hidden active:scale-95 cursor-pointer"
+              className="group flex items-center gap-0 hover:gap-2 px-2.5 py-1.5 rounded-full bg-black/50 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all duration-300 backdrop-blur-md overflow-hidden active:scale-95 cursor-pointer"
               title="Share"
               aria-label="Share"
             >
@@ -97,66 +112,75 @@ export default function MediaNavigation({ title, backToPrevious = false, backHre
             </button>
           </div>
 
-          {/* Center: Search trigger — icon + Ctrl K badge */}
-          <button
-            onClick={openSearch}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 hover:bg-white/15 border border-white/10 hover:border-amber-400/30 text-white/90 hover:text-white transition-all backdrop-blur-md cursor-pointer active:scale-95 group"
-            aria-label="Open Search (Ctrl+K)"
-            title="Search (Ctrl+K or /)"
-          >
-            <Search size={14} className="text-amber-400 shrink-0" />
-            <kbd className="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/10 group-hover:bg-white/15 border border-white/10 text-[10px] font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-              Ctrl K
-            </kbd>
-          </button>
-
-          {/* Right: VLC logo + dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <Link
-              href="/"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all backdrop-blur-md group"
+          {/* Center/Right: Search trigger — visible on mobile & desktop */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              onClick={openSearch}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-black/50 hover:bg-white/15 border border-white/10 hover:border-amber-400/30 text-white/90 hover:text-white transition-all backdrop-blur-md cursor-pointer active:scale-95 group"
+              aria-label="Open Search"
+              title="Search (Ctrl+K or /)"
             >
-              <div className="relative w-5 h-5 group-hover:scale-110 transition-transform">
-                <Image src="/assets/vlc-discord-icon.png" alt="VLC Discord RPC" fill className="object-contain" sizes="20px" />
-              </div>
-              <span className="text-xs font-bold hidden sm:inline tracking-tight">VLC RPC</span>
-            </Link>
+              <Search size={14} className="text-amber-400 shrink-0" />
+              <span className="hidden sm:inline text-xs font-semibold text-zinc-300 group-hover:text-white">Search</span>
+              <kbd className="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/10 group-hover:bg-white/15 border border-white/10 text-[10px] font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
+                Ctrl K
+              </kbd>
+            </button>
 
-            <AnimatePresence>
-              {isVlcHovered && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute right-0 top-full mt-2 w-52 p-2 rounded-2xl bg-black/60 border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.6)] backdrop-blur-2xl z-50 overflow-hidden"
-                  style={{ WebkitBackdropFilter: "blur(32px)" }}
-                >
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
-                  <div className="px-3 py-1.5 mb-1 border-b border-white/10">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-400 block">Quick Links</span>
-                  </div>
-                  <div className="space-y-0.5">
-                    {mainPageLinks.map((link, i) => (
-                      <Link
-                        key={i}
-                        href={link.href}
-                        target={link.external ? "_blank" : undefined}
-                        rel={link.external ? "noopener noreferrer" : undefined}
-                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/10 transition-all group"
-                      >
-                        <span className="flex items-center gap-2">{link.icon}{link.label}</span>
-                        {link.external && <ExternalLink size={12} className="text-zinc-500 group-hover:text-white" />}
-                      </Link>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Right: VLC logo + dropdown */}
+            <div
+              ref={menuRef}
+              className="relative"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsVlcHovered((prev) => !prev);
+                }}
+                className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-black/50 hover:bg-white/15 border border-white/10 text-white/90 hover:text-white transition-all backdrop-blur-md group cursor-pointer"
+                aria-label="VLC RPC Menu"
+              >
+                <div className="relative w-5 h-5 group-hover:scale-110 transition-transform shrink-0">
+                  <Image src="/assets/vlc-discord-icon.png" alt="VLC Discord RPC" fill className="object-contain" sizes="20px" />
+                </div>
+                <span className="text-xs font-bold hidden sm:inline tracking-tight">VLC RPC</span>
+              </button>
+
+              <AnimatePresence>
+                {isVlcHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute right-0 top-full mt-2 w-52 p-2 rounded-2xl bg-black/80 border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl z-50 overflow-hidden"
+                    style={{ WebkitBackdropFilter: "blur(32px)" }}
+                  >
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+                    <div className="px-3 py-1.5 mb-1 border-b border-white/10">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-400 block">Quick Links</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      {mainPageLinks.map((link, i) => (
+                        <Link
+                          key={i}
+                          href={link.href}
+                          target={link.external ? "_blank" : undefined}
+                          rel={link.external ? "noopener noreferrer" : undefined}
+                          onClick={() => setIsVlcHovered(false)}
+                          className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white hover:bg-white/10 transition-all group"
+                        >
+                          <span className="flex items-center gap-2">{link.icon}{link.label}</span>
+                          {link.external && <ExternalLink size={12} className="text-zinc-500 group-hover:text-white" />}
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </header>
