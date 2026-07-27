@@ -24,9 +24,22 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     }
     
     const ep = await getEpisodeDetails(source, params.id, seasonNumber, episodeNumber);
+    const ogTitle = `${ep.showTitle} S${seasonNumber}E${episodeNumber} - ${ep.title}`;
+    const ogUrl = `/api/og?type=episode&source=${source}&id=${params.id}&season=${seasonNumber}&episode=${episodeNumber}`;
     return {
-      title: `${ep.showTitle} S${seasonNumber}E${episodeNumber} - ${ep.title}`,
+      title: ogTitle,
       description: ep.overview,
+      openGraph: {
+        title: ogTitle,
+        description: ep.overview,
+        images: [{ url: ogUrl, width: 1200, height: 630, alt: ogTitle }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: ogTitle,
+        description: ep.overview,
+        images: [ogUrl],
+      },
     };
   } catch {
     return {

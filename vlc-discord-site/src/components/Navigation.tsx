@@ -87,7 +87,7 @@ export default function Navbar() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 onClick={() => window.dispatchEvent(new Event("open-search"))}
-                                className="hidden sm:flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-white transition-all group cursor-pointer"
+                                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-white transition-all group cursor-pointer"
                                 aria-label="Open Search (Ctrl+K)"
                                 title="Search (Ctrl+K or /)"
                             >
@@ -140,12 +140,24 @@ export default function Navbar() {
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
                             className="fixed top-0 right-0 bottom-0 w-[300px] bg-[#0d0d0f] border-l border-white/[0.08] z-[120] pointer-events-auto flex flex-col p-8"
                         >
-                            <div className="flex items-center justify-between mb-12">
+                            <div className="flex items-center justify-between mb-8">
                                 <span className="font-bold text-white text-lg tracking-tight">Navigation</span>
                                 <button onClick={() => setIsMenuOpen(false)} className="p-2 text-[#52525b] hover:text-white">
                                     <X size={24} />
                                 </button>
                             </div>
+
+                            {/* Mobile Search Button */}
+                            <button
+                                onClick={() => {
+                                    setIsMenuOpen(false);
+                                    window.dispatchEvent(new Event("open-search"));
+                                }}
+                                className="flex items-center gap-3 w-full p-3.5 mb-6 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white font-semibold text-sm transition-all active:scale-95"
+                            >
+                                <Search size={18} className="text-[#FF9500]" />
+                                Search Movies & Shows
+                            </button>
 
                             <div className="flex flex-col gap-2">
                                 {navLinks.map((link, i) => (

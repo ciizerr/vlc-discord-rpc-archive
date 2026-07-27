@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Play, X, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,54 @@ function getRatingDescription(rating?: string | null): string {
 
 export default function MediaHero({ media }: { media: MediaDetails }) {
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Backdrop carousel selection
+  const backdrops = useMemo(() => {
+    return (media.backdrops && media.backdrops.length > 0)
+      ? media.backdrops.slice(0, 8)
+      : (media.backdropPath ? [media.backdropPath] : (media.posterPath ? [media.posterPath] : []));
+  }, [media.backdrops, media.backdropPath, media.posterPath]);
+
+  const [currentBackdropIndex, setCurrentBackdropIndex] = useState(0);
+
+  // Idle staggered background preloading (Zero network congestion on page load)
+  useEffect(() => {
+    if (typeof window === "undefined" || !backdrops || backdrops.length <= 1) return;
+
+    // 1. Preload NEXT image (#1) immediately so first transition is 100% ready
+    if (backdrops[1]) {
+      const nextImg = new window.Image();
+      nextImg.src = backdrops[1];
+    }
+
+    // 2. Preload remaining images lazily during browser idle time
+    const preloadOthers = () => {
+      backdrops.slice(2).forEach((url, i) => {
+        setTimeout(() => {
+          if (url) {
+            const img = new window.Image();
+            img.src = url;
+          }
+        }, i * 1000); // Stagger by 1s each
+      });
+    };
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(preloadOthers, { timeout: 3000 });
+      return () => window.cancelIdleCallback(idleId);
+    } else {
+      const timer = setTimeout(preloadOthers, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [backdrops]);
+
+  useEffect(() => {
+    if (backdrops.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentBackdropIndex((prev) => (prev + 1) % backdrops.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [backdrops.length]);
 
   const directorName = media.directors?.length > 0 ? media.directors[0].name : null;
   const primaryStudio = media.networks?.length > 0 ? media.networks[0] : null;
@@ -63,17 +111,24 @@ export default function MediaHero({ media }: { media: MediaDetails }) {
       </AnimatePresence>
 
       <div className="relative w-full overflow-hidden pb-8">
-        {/* Dynamic Backdrop */}
+        {/* Dynamic Looping Backdrop */}
         <div className="relative w-full h-[55vh] md:h-[65vh] bg-black overflow-hidden">
-          {media.backdropPath || media.posterPath ? (
-            <motion.div
-              initial={{ scale: 1.1, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1 }}
-              className={`absolute inset-0 bg-cover bg-center ${!media.trailerKey ? "blur-md scale-110 opacity-60" : ""}`}
-              style={{ backgroundImage: `url(${media.backdropPath || media.posterPath})` }}
-            />
-          ) : null}
+          <AnimatePresence mode="popLayout">
+            {backdrops.length > 0 && (
+              <motion.div
+                key={backdrops[currentBackdropIndex]}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1.12 }}
+                exit={{ opacity: 0, scale: 1.15 }}
+                transition={{
+                  opacity: { duration: 2.0, ease: "easeInOut" },
+                  scale: { duration: 8.5, ease: "linear" },
+                }}
+                className={`absolute inset-0 bg-cover bg-center ${!media.trailerKey ? "blur-md opacity-60" : ""}`}
+                style={{ backgroundImage: `url(${backdrops[currentBackdropIndex]})` }}
+              />
+            )}
+          </AnimatePresence>
 
           {/* Vignette & Gradients */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />

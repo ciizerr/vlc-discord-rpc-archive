@@ -17,9 +17,21 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
     const params = await props.params;
     const media = await getMovieDetails(params.id);
+    const ogUrl = `/api/og?type=movie&id=${params.id}`;
     return {
       title: media.title,
       description: media.overview,
+      openGraph: {
+        title: media.title,
+        description: media.overview,
+        images: [{ url: ogUrl, width: 1200, height: 630, alt: media.title }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: media.title,
+        description: media.overview,
+        images: [ogUrl],
+      },
     };
   } catch {
     return {

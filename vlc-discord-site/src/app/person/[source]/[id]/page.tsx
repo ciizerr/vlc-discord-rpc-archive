@@ -19,9 +19,22 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     if (source !== 'tmdb' && source !== 'tvmaze') return { title: "Person Details" };
 
     const person = await getPersonDetails(source, params.id);
+    const desc = person.biography ? person.biography.slice(0, 160) : `Explore movies and TV shows starring ${person.name}.`;
+    const ogUrl = `/api/og?type=person&source=${source}&id=${params.id}`;
     return {
       title: person.name,
-      description: person.biography ? person.biography.slice(0, 160) : `Explore movies and TV shows starring ${person.name}.`,
+      description: desc,
+      openGraph: {
+        title: person.name,
+        description: desc,
+        images: [{ url: ogUrl, width: 1200, height: 630, alt: person.name }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: person.name,
+        description: desc,
+        images: [ogUrl],
+      },
     };
   } catch {
     return {

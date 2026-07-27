@@ -51,42 +51,73 @@ export default function MediaDiscoveryCarousel({ recommendations = [], currentMe
   };
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    let isMounted = true;
 
-    try {
-      const stored = localStorage.getItem("vlc_rpc_recent_media");
-      const list: RecentItem[] = stored ? JSON.parse(stored) : [];
+    async function syncRecent() {
+      // 1. Prepare current item if viewing media
+      let newItem: RecentItem | null = null;
+      if (currentMedia) {
+        const currentUrl = currentMedia.mediaType === "movie"
+          ? `/movie/${currentMedia.id}`
+          : `/show/${currentMedia.source}/${currentMedia.id}`;
 
-      if (!currentMedia) {
-        setTimeout(() => setRecentItems(list), 0);
-        return;
+        newItem = {
+          id: currentMedia.id,
+          title: currentMedia.title,
+          posterPath: currentMedia.posterPath,
+          releaseYear: currentMedia.releaseYear,
+          mediaType: currentMedia.mediaType,
+          source: currentMedia.source,
+          url: currentUrl,
+        };
+
+        // Post to global server API
+        try {
+          fetch("/api/recent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newItem),
+          }).catch(() => { });
+        } catch {
+          // ignore post failure
+        }
       }
 
-      const currentUrl = currentMedia.mediaType === "movie" 
-        ? `/movie/${currentMedia.id}` 
-        : `/show/${currentMedia.source}/${currentMedia.id}`;
+      // 2. Fetch global recent list from server API
+      try {
+        const res = await fetch("/api/recent", { cache: "no-store" });
+        if (res.ok) {
+          const globalItems: RecentItem[] = await res.json();
+          if (isMounted && Array.isArray(globalItems) && globalItems.length > 0) {
+            setRecentItems(globalItems);
+            // Save to localStorage as backup
+            try {
+              localStorage.setItem("vlc_rpc_recent_media", JSON.stringify(globalItems.slice(0, 10)));
+            } catch { }
+            return;
+          }
+        }
+      } catch {
+        // Fallback to local storage below if network fails
+      }
 
-      const newItem: RecentItem = {
-        id: currentMedia.id,
-        title: currentMedia.title,
-        posterPath: currentMedia.posterPath,
-        releaseYear: currentMedia.releaseYear,
-        mediaType: currentMedia.mediaType,
-        source: currentMedia.source,
-        url: currentUrl,
-      };
-
-      const updatedList = list.filter(item => item.url !== currentUrl);
-      const nextStoredList = [newItem, ...updatedList].slice(0, 8);
-      
-      localStorage.setItem("vlc_rpc_recent_media", JSON.stringify(nextStoredList));
-
-      setTimeout(() => {
-        setRecentItems(nextStoredList); // Using nextStoredList to include current item
-      }, 0);
-    } catch {
-      // localStorage fallback ignore
+      // 3. Fallback to localStorage
+      try {
+        const stored = localStorage.getItem("vlc_rpc_recent_media");
+        let list: RecentItem[] = stored ? JSON.parse(stored) : [];
+        if (newItem) {
+          list = [newItem, ...list.filter(i => i.url !== newItem?.url)].slice(0, 10);
+          localStorage.setItem("vlc_rpc_recent_media", JSON.stringify(list));
+        }
+        if (isMounted) setRecentItems(list);
+      } catch { }
     }
+
+    syncRecent();
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentMedia]);
 
   useEffect(() => {
@@ -109,9 +140,15 @@ export default function MediaDiscoveryCarousel({ recommendations = [], currentMe
       {/* Recently Viewed Carousel */}
       {recentItems.length > 0 && (
         <div className="mb-12">
-          <div className="flex items-center gap-2.5 mb-6">
-            <History size={20} className="text-sky-400" />
-            <h2 className="text-2xl font-bold text-white tracking-tight">Recently Viewed</h2>
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
+            <div className="flex items-center gap-2.5">
+              <History size={20} className="text-sky-400" />
+              <h2 className="text-2xl font-bold text-white tracking-tight">Recent Activity</h2>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live Visitor Feed</span>
+            </div>
           </div>
 
           <div className="relative group/carousel">
@@ -151,7 +188,7 @@ export default function MediaDiscoveryCarousel({ recommendations = [], currentMe
               )}
             </AnimatePresence>
 
-            <div 
+            <div
               ref={recentScrollRef}
               className="flex gap-4 overflow-x-auto pb-4 scrollbar-none snap-x scroll-smooth px-1"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -200,8 +237,8 @@ export default function MediaDiscoveryCarousel({ recommendations = [], currentMe
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {recommendations.map((item, index) => {
-              const targetUrl = item.mediaType === "movie" 
-                ? `/movie/${item.id}` 
+              const targetUrl = item.mediaType === "movie"
+                ? `/movie/${item.id}`
                 : `/show/${item.source}/${item.id}`;
 
               return (
