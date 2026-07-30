@@ -22,3 +22,4 @@ release/
 *.ilk
 *.suo
 .vs/
+windhawk-source/dev
