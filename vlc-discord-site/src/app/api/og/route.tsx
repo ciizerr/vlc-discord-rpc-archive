@@ -308,7 +308,7 @@ export async function GET(req: NextRequest) {
           <div
             style={{
               display: "flex",
-              paddingLeft: "60px",
+              paddingLeft: "48px",
               zIndex: 10,
             }}
           >
@@ -317,28 +317,28 @@ export async function GET(req: NextRequest) {
               <img
                 src={posterBase64}
                 alt={title}
-                width="240"
-                height="360"
+                width="300"
+                height="450"
                 style={{
-                  borderRadius: "24px",
+                  borderRadius: "28px",
                   objectFit: "cover",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  boxShadow: "0 20px 50px rgba(0,0,0,0.8)",
+                  border: "2px solid rgba(255, 255, 255, 0.25)",
+                  boxShadow: "0 25px 60px rgba(0,0,0,0.85)",
                 }}
               />
             ) : (
               <div
                 style={{
-                  width: "240px",
-                  height: "360px",
-                  borderRadius: "24px",
+                  width: "300px",
+                  height: "450px",
+                  borderRadius: "28px",
                   backgroundColor: "#18181b",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  border: "2px solid rgba(255,255,255,0.15)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#71717a",
-                  fontSize: "24px",
+                  fontSize: "28px",
                   fontWeight: 700,
                 }}
               >
@@ -353,22 +353,22 @@ export async function GET(req: NextRequest) {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              paddingLeft: "48px",
-              paddingRight: "60px",
+              paddingLeft: "44px",
+              paddingRight: "48px",
               zIndex: 10,
               flex: 1,
-              gap: "14px",
+              gap: "16px",
             }}
           >
             {/* Top Category Badge */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               <div
                 style={{
-                  padding: "6px 14px",
+                  padding: "8px 18px",
                   borderRadius: "999px",
                   backgroundColor: "#fbbf24",
                   color: "#000000",
-                  fontSize: "12px",
+                  fontSize: "15px",
                   fontWeight: 900,
                   letterSpacing: "0.1em",
                 }}
@@ -376,7 +376,7 @@ export async function GET(req: NextRequest) {
                 {badgeText}
               </div>
               {year && (
-                <div style={{ fontSize: "15px", fontWeight: 700, color: "#a1a1aa" }}>
+                <div style={{ fontSize: "20px", fontWeight: 700, color: "#a1a1aa" }}>
                   {year}
                 </div>
               )}
@@ -385,12 +385,12 @@ export async function GET(req: NextRequest) {
             {/* Title */}
             <div
               style={{
-                fontSize: title.length > 30 ? "38px" : "48px",
-                fontWeight: 800,
+                fontSize: title.length > 30 ? "44px" : "56px",
+                fontWeight: 900,
                 color: "#ffffff",
-                lineHeight: 1.1,
+                lineHeight: 1.12,
                 letterSpacing: "-0.02em",
-                maxHeight: "120px",
+                maxHeight: "135px",
                 overflow: "hidden",
               }}
             >
@@ -399,7 +399,7 @@ export async function GET(req: NextRequest) {
 
             {/* Subtitle / Genres */}
             {subtitle && (
-              <div style={{ fontSize: "18px", fontWeight: 600, color: "#fbbf24" }}>
+              <div style={{ fontSize: "23px", fontWeight: 700, color: "#fbbf24" }}>
                 {subtitle}
               </div>
             )}
@@ -411,21 +411,21 @@ export async function GET(req: NextRequest) {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "6px",
-                    padding: "6px 14px",
-                    borderRadius: "10px",
-                    backgroundColor: "rgba(251, 191, 36, 0.15)",
-                    border: "1px solid rgba(251, 191, 36, 0.3)",
+                    gap: "8px",
+                    padding: "8px 18px",
+                    borderRadius: "12px",
+                    backgroundColor: "rgba(251, 191, 36, 0.18)",
+                    border: "1px solid rgba(251, 191, 36, 0.35)",
                     color: "#fef08a",
-                    fontSize: "14px",
-                    fontWeight: 700,
+                    fontSize: "18px",
+                    fontWeight: 800,
                   }}
                 >
                   <span>⭐ {rating}</span>
                 </div>
               )}
               {extraMeta && (
-                <div style={{ fontSize: "14px", color: "#a1a1aa", fontWeight: 500 }}>
+                <div style={{ fontSize: "18px", color: "#a1a1aa", fontWeight: 600 }}>
                   {extraMeta}
                 </div>
               )}
@@ -436,12 +436,12 @@ export async function GET(req: NextRequest) {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
-                marginTop: "16px",
-                padding: "8px 16px",
-                borderRadius: "12px",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                gap: "12px",
+                marginTop: "14px",
+                padding: "10px 20px",
+                borderRadius: "14px",
+                backgroundColor: "rgba(255, 255, 255, 0.08)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
                 alignSelf: "flex-start",
               }}
             >
@@ -450,11 +450,11 @@ export async function GET(req: NextRequest) {
                 <img
                   src={logoBase64}
                   alt="VLC RPC"
-                  width="20"
-                  height="20"
+                  width="26"
+                  height="26"
                 />
               ) : null}
-              <span style={{ fontSize: "13px", fontWeight: 700, color: "#e4e4e7" }}>
+              <span style={{ fontSize: "16px", fontWeight: 800, color: "#ffffff" }}>
                 VLC Discord RPC
               </span>
             </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check, Link2 } from "lucide-react";
+import { X, Copy, Check, Link2, Eye } from "lucide-react";
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -18,7 +18,24 @@ export default function ShareModal({ isOpen, onClose, title }: ShareModalProps) 
     return "";
   };
 
+  const getOgImageUrl = () => {
+    if (typeof window === "undefined") return "/api/og?type=home";
+    const path = window.location.pathname;
+    const parts = path.split("/").filter(Boolean);
+    if (parts[0] === "movie" && parts[1]) {
+      return `/api/og?type=movie&id=${parts[1]}`;
+    }
+    if (parts[0] === "show" && parts[1] && parts[2]) {
+      return `/api/og?type=show&source=${parts[1]}&id=${parts[2]}`;
+    }
+    if (parts[0] === "person" && parts[1] && parts[2]) {
+      return `/api/og?type=person&source=${parts[1]}&id=${parts[2]}`;
+    }
+    return "/api/og?type=home";
+  };
+
   const currentUrl = getUrl();
+  const ogImageUrl = getOgImageUrl();
   const mediaTitle = title || "VLC Discord RPC Media";
 
   const handleCopy = () => {
@@ -112,24 +129,41 @@ export default function ShareModal({ isOpen, onClose, title }: ShareModalProps) 
             exit={{ scale: 0.92, opacity: 0, y: 16 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm bg-[#0d0d10] border border-white/[0.08] rounded-3xl p-6 shadow-[0_32px_80px_rgba(0,0,0,0.8)] relative overflow-hidden"
+            className="w-full max-w-md bg-[#0d0d10] border border-white/[0.08] rounded-3xl p-6 shadow-[0_32px_80px_rgba(0,0,0,0.8)] relative overflow-hidden"
           >
             {/* Subtle top sheen */}
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent pointer-events-none" />
 
             {/* Header */}
-            <div className="flex items-start justify-between mb-5">
+            <div className="flex items-start justify-between mb-4">
               <div>
                 <h2 className="text-white font-bold text-base leading-tight">Share</h2>
-                <p className="text-zinc-500 text-xs mt-0.5 max-w-[200px] truncate">{mediaTitle}</p>
+                <p className="text-zinc-500 text-xs mt-0.5 max-w-[240px] truncate">{mediaTitle}</p>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-full bg-white/[0.05] hover:bg-white/10 text-zinc-500 hover:text-white transition-all"
+                className="p-1.5 rounded-full bg-white/[0.05] hover:bg-white/10 text-zinc-500 hover:text-white transition-all cursor-pointer"
                 aria-label="Close modal"
               >
                 <X size={16} />
               </button>
+            </div>
+
+            {/* Open Graph Social Card Live Preview */}
+            <div className="mb-5 flex flex-col gap-1.5">
+              <span className="text-[10px] text-zinc-500 font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+                <Eye size={12} className="text-amber-400" />
+                Social Card Preview
+              </span>
+              <div className="relative aspect-[1200/630] w-full rounded-2xl overflow-hidden border border-white/10 bg-zinc-950 shadow-xl group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={ogImageUrl}
+                  alt="Open Graph Preview"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none" />
+              </div>
             </div>
 
             {/* Social Share Buttons */}
